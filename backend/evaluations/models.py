@@ -20,7 +20,7 @@ class Evaluation(models.Model):
     )
 
     placement = models.ForeignKey(
-        'placements.InternshipPlacement',
+        User,
         on_delete=models.CASCADE,
         related_name='evaluations'
     )

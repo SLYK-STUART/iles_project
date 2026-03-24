@@ -21,6 +21,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
     
 class CustomUser(AbstractUser):
+    username = None
 
     ROLE_CHOICES = (
         ('STUDENT', 'Student'),
