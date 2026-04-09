@@ -34,13 +34,8 @@ INSTALLED_APPS = [
     'placements',
     'logbook',
     'evaluations',
-<<<<<<< HEAD
-    'placements',
-    'rest_framework',
-=======
     'rest_framework',
     'rest_framework.authtoken',
->>>>>>> f1276aadcc2251d14661777aa18d6c471d826b72
 ]
 
 MIDDLEWARE = [
