@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'logbook',
     'evaluations',
     'placements',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
