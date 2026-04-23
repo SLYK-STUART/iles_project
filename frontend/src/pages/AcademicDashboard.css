@@ -1,0 +1,142 @@
+.acad-container {
+  padding: 2rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  color: white;
+}
+
+.header p {
+  color: #94a3b8;
+}
+
+/* STATS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #1e293b;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  text-align: center;
+}
+
+.stat-card.success {
+  border-color: #22c55e;
+}
+
+.stat-card.danger {
+  border-color: #ef4444;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+/* PANEL */
+.panel {
+  background: #1e293b;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid #334155;
+}
+
+/* PLACEMENT CARD */
+.placement-card {
+  background: #334155;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.placement-card .top {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* PROGRESS */
+.progress {
+  height: 6px;
+  background: #0f172a;
+  border-radius: 999px;
+  margin: 10px 0;
+}
+
+.progress div {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  border-radius: 999px;
+}
+
+/* MINI STATS */
+.mini {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+/* LOGS */
+.log-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem;
+  background: #334155;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+/* STATUS */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.approved {
+  background: #22c55e;
+  color: #0f172a;
+}
+
+.status-badge.rejected {
+  background: #ef4444;
+  color: white;
+}
+
+.status-badge.submitted {
+  background: #facc15;
+  color: #1e293b;
+}
+/* BUTTON */
+button {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2563eb;
+}
