@@ -1,0 +1,214 @@
+/* =====================================
+   WP_SUP PERFORMANCE EVALUATION PAGE
+   Dark theme - consistent with other dashboards
+   ===================================== */
+
+.evaluation-container {
+  padding: 2rem;
+  background: #0f172a;
+  min-height: 100vh;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.evaluation-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.back-btn {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.back-btn:hover {
+  background: #475569;
+}
+
+.evaluation-header h1 {
+  margin: 0;
+  color: white;
+  font-size: 2rem;
+}
+
+/* Student Info Card */
+.student-info-card {
+  background: #1e293b;
+  padding: 1.8rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  border: 1px solid #334155;
+}
+
+.student-info-card h2 {
+  margin-top: 0;
+  color: #e2e8f0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.info-grid p {
+  margin: 0.4rem 0;
+}
+
+/* Evaluation Form */
+.evaluation-form {
+  background: #1e293b;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid #334155;
+}
+
+.evaluation-form h2 {
+  margin-top: 0;
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+/* Error Message */
+.form-error {
+  background: #7f1d1d;
+  color: #fecaca;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+/* Criteria List */
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.criterion-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #334155;
+  padding: 1.4rem 1.8rem;
+  border-radius: 12px;
+  gap: 1.5rem;
+}
+
+.criterion-info {
+  flex: 1;
+}
+
+.criterion-info label {
+  font-weight: 600;
+  font-size: 1.05rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.crit-desc {
+  color: #94a3b8;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.score-input {
+  width: 140px;
+  padding: 0.9rem;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* Comments */
+.comments-section {
+  margin-top: 2rem;
+}
+
+.comments-section label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.comments-section textarea {
+  width: 100%;
+  background: #334155;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  padding: 1.2rem;
+  color: white;
+  resize: vertical;
+  min-height: 130px;
+  font-size: 1rem;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 1.1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.submit-btn:disabled {
+  background: #64748b;
+  cursor: not-allowed;
+}
+
+/* Loading & Error */
+.loading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 1.3rem;
+  color: #94a3b8;
+}
+
+.error {
+  text-align: center;
+  margin-top: 100px;
+  color: #f87171;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .evaluation-container {
+    padding: 1.2rem;
+  }
+  
+  .criterion-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .score-input {
+    width: 100%;
+  }
+}
