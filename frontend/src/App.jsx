@@ -18,10 +18,8 @@ function App() {
   return (
     <Routes>
 
-      {/* LOGIN */}
       <Route path="/" element={<Login />} />
 
-      {/* LOGBOOK */}
       <Route
         path="/logbook"
         element={
@@ -31,7 +29,6 @@ function App() {
         }
       />
 
-      {/* STUDENT */}
       <Route
         path="/student"
         element={
@@ -41,7 +38,6 @@ function App() {
         }
       />
 
-      {/* WORKPLACE SUPERVISOR */}
       <Route
         path="/wp-supervisor"
         element={
@@ -51,7 +47,6 @@ function App() {
         }
       />
 
-      {/* ACADEMIC SUPERVISOR */}
       <Route
         path="/ac-supervisor"
         element={
@@ -61,7 +56,6 @@ function App() {
         }
       />
 
-      {/* ADMIN */}
       <Route
         path="/admin"
         element={
@@ -71,11 +65,6 @@ function App() {
         }
       />
 
-      {/* ===================== */}
-      {/* EVALUATION ROUTES */}
-      {/* ===================== */}
-
-      {/* AC_SUP Evaluation */}
       <Route
         path="/ac-supervisor/evaluate/:placementId"
         element={
@@ -85,7 +74,6 @@ function App() {
         }
       />
 
-      {/* WP_SUP Evaluation - NEW */}
       <Route
         path="/wp-supervisor/evaluate/:placementId"
         element={
@@ -104,7 +92,6 @@ function App() {
         }
       />
 
-      {/* Fallback */}
       <Route path="*" element={<Login />} />
 
     </Routes>
