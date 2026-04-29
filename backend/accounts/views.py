@@ -110,3 +110,33 @@ class StudentDashboardView(APIView):
             "recent_activity": activities,
             "student_profile": student_profile,
         })
+    
+User = get_user_model()
+    
+class AdminUserListView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role != "ADMIN":
+            return Response({"error": "Unauthorized"}, status=403)
+        
+        users = User.objects.all().order_by('-date_joined')
+
+        user_data = []
+        for user in users:
+            user_data.append({
+                "id": user.id,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "role": user.role,
+                "phone_number": user.phone_number,
+                "is_active": user.is_active,
+                "date_joined": user.date_joined.strftime("%Y-%m-%d %H:%M"),
+                "last_login": user.last_login.strftime("%Y-%m-%d %H-%M") if user.last_login else None,
+            })
+
+        return Response({
+            "total_users": users.count(),
+            "users": user_data
+        })

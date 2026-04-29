@@ -52,8 +52,7 @@ export default function AcademicDashboard() {
 
   return (
     <div className="acad-container">
-
-      {/* HEADER */}
+      
       <div className="header">
         <div>
           <h1>Academic Dashboard</h1>
@@ -61,7 +60,6 @@ export default function AcademicDashboard() {
         </div>
       </div>
 
-      {/* STATS */}
       <div className="stats-grid">
 
         <div className="stat-card">
@@ -90,10 +88,8 @@ export default function AcademicDashboard() {
 
       </div>
 
-      {/* MAIN GRID */}
       <div className="grid">
 
-        {/* PLACEMENTS */}
         <div className="panel">
           <h2>Placements</h2>
 
@@ -116,7 +112,6 @@ export default function AcademicDashboard() {
                 )}
               </div>
 
-              {/* PROGRESS */}
               <div className="progress">
                 <div style={{ width: `${p.progress}%` }} />
               </div>
@@ -136,7 +131,6 @@ export default function AcademicDashboard() {
           </button>
         </div>
 
-        {/* CHARTS */}
         <div className="panel">
           <h2>Analytics</h2>
 
@@ -162,7 +156,6 @@ export default function AcademicDashboard() {
 
       </div>
 
-      {/* LOGS */}
       <div className="panel">
         <h2>Recent Logs</h2>
 

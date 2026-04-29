@@ -1,7 +1,3 @@
-/* =========================================
-   LOGBOOK DASHBOARD - DARK MODERN UI
-   ========================================= */
-
 .dashboard {
   display: flex;
   min-height: 100vh;
@@ -9,10 +5,6 @@
   color: #e2e8f0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-/* ========================
-   SIDEBAR
-   ======================== */
 
 .sidebar {
   width: 260px;
@@ -51,10 +43,6 @@
   font-weight: 600;
 }
 
-/* ========================
-   MAIN CONTENT
-   ======================== */
-
 .main {
   flex: 1;
   padding: 2rem;
@@ -67,9 +55,6 @@
   color: white;
 }
 
-/* ========================
-   STATS CARDS
-   ======================== */
 
 .cards {
   display: grid;
@@ -103,9 +88,6 @@
   color: white;
 }
 
-/* ========================
-   FORM SECTION
-   ======================== */
 
 .chart-section {
   background: #1e293b;
@@ -120,7 +102,6 @@
   color: white;
 }
 
-/* FORM */
 .logbook-form {
   display: flex;
   flex-direction: column;
@@ -148,7 +129,6 @@
   border-color: #60a5fa;
 }
 
-/* BUTTON */
 .btn-primary {
   background: #3b82f6;
   color: white;
@@ -164,10 +144,6 @@
   background: #2563eb;
 }
 
-/* ========================
-   LOG LIST
-   ======================== */
-
 .activity {
   background: #1e293b;
   padding: 2rem;
@@ -180,7 +156,6 @@
   color: white;
 }
 
-/* LOG CARD */
 .log-card {
   background: #334155;
   padding: 1.2rem;
@@ -193,7 +168,6 @@
   transform: translateY(-2px);
 }
 
-/* HEADER */
 .log-header {
   display: flex;
   justify-content: space-between;
@@ -201,7 +175,6 @@
   font-weight: 600;
 }
 
-/* STATUS BADGES */
 .status {
   padding: 4px 10px;
   border-radius: 999px;
@@ -229,7 +202,6 @@
   color: white;
 }
 
-/* ACTION BUTTONS */
 .log-actions {
   margin-top: 1rem;
   display: flex;
@@ -246,7 +218,6 @@
   transition: 0.2s;
 }
 
-/* BUTTON TYPES */
 .log-actions button:nth-child(1) {
   background: #3b82f6;
   color: white;
@@ -266,19 +237,11 @@
   opacity: 0.85;
 }
 
-/* ========================
-   LOADING / EMPTY
-   ======================== */
-
 .loading {
   text-align: center;
   padding: 4rem;
   color: #94a3b8;
 }
-
-/* ========================
-   RESPONSIVE
-   ======================== */
 
 @media (max-width: 992px) {
   .sidebar {

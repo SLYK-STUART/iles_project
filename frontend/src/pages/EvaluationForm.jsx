@@ -14,7 +14,6 @@ export default function EvaluationPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch placement data + criteria
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -85,7 +84,6 @@ export default function EvaluationPage() {
         <h1>Academic Evaluation</h1>
       </div>
 
-      {/* Student Information */}
       <div className="student-info-card">
         <h2>Student Information</h2>
         <div className="info-grid">
@@ -95,7 +93,6 @@ export default function EvaluationPage() {
         </div>
       </div>
 
-      {/* Weekly Logs Summary */}
       <div className="logs-section">
         <h2>Weekly Logs Summary</h2>
         <div className="logs-list">
@@ -115,7 +112,6 @@ export default function EvaluationPage() {
         </div>
       </div>
 
-      {/* Evaluation Form */}
       <div className="evaluation-form">
         <h2>Evaluation Criteria</h2>
         
@@ -139,7 +135,6 @@ export default function EvaluationPage() {
           ))}
         </div>
 
-        {/* Comments */}
         <div className="comments-section">
           <label>Overall Comments / Feedback</label>
           <textarea
@@ -150,7 +145,6 @@ export default function EvaluationPage() {
           />
         </div>
 
-        {/* Submit Button */}
         <button 
           className="submit-evaluation-btn"
           onClick={handleSubmit}

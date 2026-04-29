@@ -42,7 +42,6 @@ export default function StudentDashboard() {
   return (
     <div className="dashboard">
 
-      {/* Sidebar */}
       <div className="sidebar">
         <h2>Student</h2>
         <ul>
@@ -53,12 +52,10 @@ export default function StudentDashboard() {
         </ul>
       </div>
 
-      {/* Main */}
       <div className="main">
 
         <h1>Welcome, {data.name}</h1>
 
-        {/* ================= CARDS ================= */}
         <div className="cards">
           <div className="card">
             <h3>Total Logs</h3>
@@ -76,7 +73,6 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* ================= PLACEMENT INFO ================= */}
         <div className="profile_section">
           <div className="profile-card">
             <h2>Student Profile</h2>
@@ -94,7 +90,6 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* ================= PROGRESS CHART ================= */}
         <div className="chart-section">
           <h2>Progress Overview</h2>
 
@@ -108,7 +103,6 @@ export default function StudentDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* ================= ACTIVITY ================= */}
         <div className="activity">
           <h2>Recent Activity</h2>
            

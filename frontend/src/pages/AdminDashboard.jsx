@@ -54,7 +54,6 @@ export default function AdminDashboard() {
   if (error) return <p className="error">{error}</p>;
   if (!data) return <p className="empty">No data available</p>;
 
-  // Charts Data
   const logStatusData = [
     { name: "Submitted", value: data.submitted_logs, fill: "#eab308" },
     { name: "Approved", value: data.approved_logs, fill: "#22c55e" },
@@ -73,7 +72,6 @@ export default function AdminDashboard() {
       <h1 className="admin-title">Administrator Dashboard</h1>
       <p className="welcome-text">System Overview • Real-time Insights</p>
 
-      {/* Main Stats Grid */}
       <div className="stats-grid">
         <div className="stat-card">
           <Users size={32} />
@@ -155,7 +153,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Charts */}
       <div className="charts-grid">
         <div className="chart-box">
           <h3>Log Status Overview</h3>
@@ -191,7 +188,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Users */}
       <div className="recent-section">
         <h3>Recent Users</h3>
         {data.recent_users && data.recent_users.length > 0 ? (

@@ -31,7 +31,6 @@ export default function SupervisorDashboard() {
 
   const navigate = useNavigate();
 
-  // ================= FETCH DASHBOARD DATA =================
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -140,7 +139,6 @@ export default function SupervisorDashboard() {
 
       </div>
 
-      {/* ================= MAIN GRID ================= */}
       <div className="sup-grid">
 
         {/* -------- STUDENTS -------- */}
@@ -172,7 +170,6 @@ export default function SupervisorDashboard() {
           </button>
         </div>
 
-        {/* -------- PENDING LOGS -------- */}
         <div className="panel">
           <h3>Pending Reviews</h3>
 
@@ -201,7 +198,6 @@ export default function SupervisorDashboard() {
           </button>
         </div>
 
-        {/* -------- CHART -------- */}
         <div className="panel">
           <h3>Evaluation Overview</h3>
 
@@ -217,7 +213,6 @@ export default function SupervisorDashboard() {
 
       </div>
 
-      {/* ================= ACTIVITY ================= */}
       <div className="panel">
         <h3>Recent Activity</h3>
 
@@ -245,8 +240,7 @@ export default function SupervisorDashboard() {
         </button>
       </div>
 
-      {/* ================= QUICK ACTIONS ================= */}
-      <div className="quick-actions">
+       <div className="quick-actions">
         <button onClick={() => navigate("/students")}>
           View Students
         </button>

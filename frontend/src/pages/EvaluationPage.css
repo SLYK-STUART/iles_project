@@ -30,7 +30,6 @@
   color: white;
 }
 
-/* Student Info Card */
 .student-info-card {
   background: #1e293b;
   padding: 1.8rem;
@@ -46,7 +45,6 @@
   margin-top: 1rem;
 }
 
-/* Logs Section */
 .logs-section {
   background: #1e293b;
   padding: 1.8rem;
@@ -81,7 +79,6 @@
 .status.approved { background: #22c55e; color: black; }
 .status.rejected { background: #ef4444; color: white; }
 
-/* Evaluation Form */
 .evaluation-form {
   background: #1e293b;
   padding: 2rem;
@@ -134,7 +131,6 @@
   min-height: 120px;
 }
 
-/* Submit Button */
 .submit-evaluation-btn {
   background: #3b82f6;
   color: white;

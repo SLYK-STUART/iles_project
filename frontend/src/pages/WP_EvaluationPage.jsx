@@ -50,7 +50,6 @@ export default function WP_EvaluationPage() {
     setError("");
 
     try {
-      // 1. Submit the Performance Evaluation
       const payload = {
         placement: placementId,
         comments: comments.trim(),
@@ -62,7 +61,6 @@ export default function WP_EvaluationPage() {
 
       const evalResponse = await API.post("evaluations/evaluations/", payload);
 
-      // 2. Auto-approve all SUBMITTED logs for this placement
       if (data?.weekly_logs) {
         const submittedLogs = data.weekly_logs.filter(log => log.status === "SUBMITTED");
         
@@ -97,7 +95,6 @@ export default function WP_EvaluationPage() {
         <h1>Workplace Performance Evaluation</h1>
       </div>
 
-      {/* Student Info */}
       <div className="student-info-card">
         <h2>Student Information</h2>
         <div className="info-grid">
@@ -106,7 +103,6 @@ export default function WP_EvaluationPage() {
         </div>
       </div>
 
-      {/* Evaluation Form */}
       <div className="evaluation-form">
         <h2>Performance Criteria</h2>
         

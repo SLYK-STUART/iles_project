@@ -21,7 +21,6 @@ export default function Logbook() {
 
   const [editForm, setEditForm] = useState(form);
 
-  // ================= FETCH =================
   const fetchLogs = async () => {
     setLoading(true);
     try {
@@ -39,7 +38,6 @@ export default function Logbook() {
     fetchLogs();
   }, []);
 
-  // ================= FORM =================
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -76,7 +74,6 @@ export default function Logbook() {
     }
   };
 
-  // ================= ACTIONS =================
   const submitLog = async (id) => {
     try {
       await API.post(`logbook/logs/${id}/submit/`);
@@ -113,7 +110,6 @@ export default function Logbook() {
     }
   };
 
-  // ================= STATS =================
   const total = logs.length;
   const draft = logs.filter(l => l.status === "DRAFT").length;
   const submitted = logs.filter(l => l.status === "SUBMITTED").length;
@@ -163,7 +159,6 @@ export default function Logbook() {
           </div>
         </div>
 
-        {/* ================= CREATE FORM ================= */}
         <div className="chart-section">
           <h2>Create New Log</h2>
 
@@ -203,7 +198,6 @@ export default function Logbook() {
           </form>
         </div>
 
-        {/* ================= LOG LIST ================= */}
         <div className="activity">
           <h2>Your Logs</h2>
 
