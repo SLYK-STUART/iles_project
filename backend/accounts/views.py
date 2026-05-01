@@ -140,3 +140,51 @@ class AdminUserListView(APIView):
             "total_users": users.count(),
             "users": user_data
         })
+class AdminUserDetailView(APIView):
+    """Admin can update user details and role"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        if request.user.role != "ADMIN":
+            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(id=user_id)
+            data = {
+                "id": user.id,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "role": user.role,
+                "phone_number": user.phone_number,
+                "is_active": user.is_active,
+                "date_joined": user.date_joined.strftime("%Y-%m-%d"),
+            }
+            return Response(data)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+    def patch(self, request, user_id):
+        """Update user role, active status, or basic info"""
+        if request.user.role != "ADMIN":
+            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user = User.objects.get(id=user_id)
+
+            # Allow updating role, active status, names, phone
+            allowed_fields = ['first_name', 'last_name', 'phone_number', 'role', 'is_active']
+
+            for field in allowed_fields:
+                if field in request.data:
+                    if field == 'role' and request.data['role'] not in ['STUDENT', 'WP_SUP', 'AC_SUP', 'ADMIN']:
+                        return Response({"error": "Invalid role"}, status=400)
+                    setattr(user, field, request.data[field])
+
+            user.save()
+            return Response({"message": "User updated successfully"})
+
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)        
