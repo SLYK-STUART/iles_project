@@ -140,6 +140,7 @@ class AdminUserListView(APIView):
             "total_users": users.count(),
             "users": user_data
         })
+    
 class AdminUserDetailView(APIView):
     """Admin can update user details and role"""
     permission_classes = [IsAuthenticated]
