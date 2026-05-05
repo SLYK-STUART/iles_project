@@ -8,37 +8,66 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
+        setLoading(true);
 
         try {
-            const res = await API.post("accounts/login/", { email, password });
+            const res = await API.post("accounts/login/", {
+                email,
+                password
+            });
 
-            localStorage.setItem("access_token", res.data.access);
-            localStorage.setItem("role", res.data.role);
+            const { access, role, must_change_password } = res.data;
 
-            const role = res.data.role;
+            localStorage.setItem("access_token", access);
+            localStorage.setItem("role", role);
 
-            if (role === "STUDENT") navigate("/student");
-            else if (role === "ADMIN") navigate("/admin");
-            else if (role === "WP_SUP") navigate("/wp-supervisor");
-            else if (role === "AC_SUP") navigate("/ac-supervisor");
+            const mustChange = must_change_password === true || must_change_password === "true";
+
+            localStorage.setItem("must_change_password", mustChange);
+ 
+            if (mustChange) {
+                navigate("/change-password");
+                return;
+            }
+ 
+            switch (role) {
+                case "STUDENT":
+                    navigate("/student");
+                    break;
+                case "ADMIN":
+                    navigate("/admin");
+                    break;
+                case "WP_SUP":
+                    navigate("/wp-supervisor");
+                    break;
+                case "AC_SUP":
+                    navigate("/ac-supervisor");
+                    break;
+                default:
+                    navigate("/");
+            }
 
         } catch (err) {
             console.log("LOGIN ERROR:", err.response?.data);
-            console.log("STATUS:", err.response?.status);
 
             localStorage.removeItem("access_token");
-            localStorage.removeItem("role")
+            localStorage.removeItem("role");
+            localStorage.removeItem("must_change_password");
 
             setError(
                 err.response?.data?.detail ||
                 err.response?.data?.error ||
                 "Login Failed"
-            )
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -72,16 +101,13 @@ export default function Login() {
                     />
 
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        disabled={loading}
+                        whileHover={!loading ? { scale: 1.05 } : {}}
+                        whileTap={!loading ? { scale: 0.95 } : {}}
                     >
-                        Login
+                        {loading ? "Logging in..." : "Login"}
                     </motion.button>
                 </form>
-
-                <p className="switch-text">
-                    Don’t have an account? <span>Register</span>
-                </p>
             </motion.div>
         </div>
     );

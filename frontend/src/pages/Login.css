@@ -17,7 +17,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     text-align: center;
 }
-
+ 
 .login-card h1 {
     margin-bottom: 5px;
 }
@@ -27,7 +27,7 @@
     margin-bottom: 20px;
     color: #cbd5f5;
 }
-
+ 
 .login-card input {
     width: 100%;
     padding: 12px;
@@ -38,11 +38,11 @@
     background: rgba(255,255,255,0.2);
     color: white;
 }
-
+ 
 .login-card input::placeholder {
     color: #e5e7eb;
 }
-
+ 
 .login-card button {
     width: 100%;
     padding: 12px;
@@ -54,14 +54,14 @@
     font-weight: bold;
     cursor: pointer;
 }
-
+ 
 .error {
     background: rgba(255, 0, 0, 0.2);
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
 }
-
+ 
 .switch-text {
     margin-top: 15px;
     font-size: 13px;

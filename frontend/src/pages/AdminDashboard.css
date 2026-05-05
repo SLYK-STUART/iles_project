@@ -1,7 +1,3 @@
-/* ========================
-   ADMIN DASHBOARD - UPDATED
-   ======================== */
-
 .admin-container {
   padding: 2rem;
   background: #0f172a;
@@ -10,163 +6,149 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.admin-title {
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-
-.welcome-text {
-  color: #94a3b8;
-  font-size: 1.1rem;
-  margin-bottom: 2.5rem;
-}
-
-/* ========================
-   STATS GRID
-   ======================== */
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
-
-.stat-card {
+/* ================= HEADER ================= */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.2rem 1.5rem;
   background: #1e293b;
-  padding: 1.8rem 1.5rem;
-  border-radius: 16px;
-  text-align: center;
-  transition: all 0.3s ease;
+  border-radius: 14px;
   border: 1px solid #334155;
 }
 
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  border-color: #64748b;
-}
-
-.stat-card svg {
-  color: #60a5fa;
-  margin-bottom: 1rem;
-}
-
-.stat-card h3 {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #cbd5e1;
-  margin: 0 0 0.6rem 0;
-}
-
-.number {
-  font-size: 2.2rem;
-  font-weight: 700;
+.admin-header h1 {
+  font-size: 1.8rem;
   color: white;
-  margin: 0;
+  font-weight: 700;
 }
 
-/* Highlighted Cards */
-.highlight {
-  border-top: 5px solid #f59e0b;
-  background: #272f3f;
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 600;
+  transition: 0.2s;
 }
 
-.highlight svg {
-  color: #fbbf24;
+.logout-btn:hover {
+  background: #dc2626;
 }
 
-/* ========================
-   CHARTS SECTION
-   ======================== */
+/* ================= ACTION CARDS ================= */
+.admin-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
 
+.action-card {
+  background: #1e293b;
+  padding: 1.8rem;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-6px);
+  background: #273449;
+  border-color: #475569;
+}
+
+.action-card h3 {
+  margin-top: 0.8rem;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.action-card p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+/* ================= SECTIONS ================= */
+.section {
+  background: #1e293b;
+  padding: 1.8rem;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  margin-bottom: 2rem;
+}
+
+.section h3 {
+  margin-bottom: 1.2rem;
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* ================= RECENT ITEMS ================= */
+.recent-item,
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  background: #334155;
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  transition: 0.2s;
+}
+
+.recent-item:hover,
+.activity-item:hover {
+  background: #475569;
+}
+
+.recent-item strong {
+  color: white;
+}
+
+.recent-item span {
+  margin-left: 10px;
+  font-size: 0.85rem;
+  background: #475569;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+/* ================= CHARTS ================= */
 .charts-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 1.8rem;
-  margin-bottom: 3rem;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .chart-box {
   background: #1e293b;
-  padding: 1.8rem;
+  padding: 1.5rem;
   border-radius: 16px;
   border: 1px solid #334155;
 }
 
 .chart-box h3 {
-  margin-bottom: 1.2rem;
-  color: #e2e8f0;
-  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: white;
 }
 
-/* ========================
-   RECENT USERS SECTION
-   ======================== */
-
-.recent-section {
-  background: #1e293b;
-  padding: 1.8rem;
-  border-radius: 16px;
-  border: 1px solid #334155;
-}
-
-.recent-section h3 {
-  margin-bottom: 1.2rem;
-  color: #e2e8f0;
-}
-
-.recent-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.recent-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.9rem 1.1rem;
-  background: #334155;
-  border-radius: 10px;
-  transition: 0.2s;
-}
-
-.recent-item:hover {
-  background: #475569;
-}
-
-.recent-item strong {
-  font-size: 1.05rem;
-}
-
-.role-badge {
-  font-size: 0.85rem;
-  padding: 0.25rem 0.7rem;
-  background: #475569;
-  border-radius: 9999px;
-  margin-left: 10px;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.date {
-  color: #94a3b8;
-  font-size: 0.9rem;
-}
-
-/* ========================
-   LOADING & ERROR STATES
-   ======================== */
-
+/* ================= STATES ================= */
 .loading,
 .empty,
 .error {
   text-align: center;
   margin-top: 100px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: #94a3b8;
 }
 
@@ -174,11 +156,12 @@
   color: #f87171;
 }
 
-/* ========================
-   RESPONSIVE DESIGN
-   ======================== */
-
+/* ================= RESPONSIVE ================= */
 @media (max-width: 992px) {
+  .admin-actions {
+    grid-template-columns: 1fr;
+  }
+
   .charts-grid {
     grid-template-columns: 1fr;
   }
@@ -186,14 +169,12 @@
 
 @media (max-width: 768px) {
   .admin-container {
-    padding: 1.2rem;
+    padding: 1rem;
   }
-  
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-  
-  .admin-title {
-    font-size: 2rem;
+
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
   }
 }

@@ -1,201 +1,264 @@
-.evaluation-container {
-  padding: 2rem;
-  background: #0f172a;
-  min-height: 100vh;
-  color: #e2e8f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  background: #0f172a;
+  overflow-x: hidden;
+}
+
+.evaluation-container {
+  min-height: 100vh;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem 2.5rem;
+  width: 100%;
+}
+ 
 .evaluation-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #334155;
 }
 
-.back-btn {
+.evaluation-header button {
   background: #334155;
-  color: white;
+  color: #e2e8f0;
   border: none;
-  padding: 0.7rem 1.4rem;
+  padding: 10px 20px;
   border-radius: 8px;
-  cursor: pointer;
   font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.back-btn:hover {
+.evaluation-header button:hover {
   background: #475569;
 }
 
 .evaluation-header h1 {
-  margin: 0;
   color: white;
   font-size: 2rem;
+  font-weight: 600;
 }
-
+ 
 .student-info-card {
   background: #1e293b;
-  padding: 1.8rem;
+  padding: 2rem;
   border-radius: 16px;
-  margin-bottom: 2rem;
   border: 1px solid #334155;
+  margin-bottom: 2rem;
 }
 
 .student-info-card h2 {
-  margin-top: 0;
-  color: #e2e8f0;
+  margin-bottom: 1.4rem;
+  color: #60a5fa;
+  font-size: 1.6rem;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+.student-info-card p {
+  margin: 0.75rem 0;
+  color: #cbd5e1;
+  line-height: 1.7;
 }
-
-.info-grid p {
-  margin: 0.4rem 0;
+ 
+.eval-status {
+  background: #1e293b;
+  padding: 1rem 1.8rem;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  margin-bottom: 2rem;
+  display: inline-block;
+  font-size: 1.05rem;
 }
-
-.evaluation-form {
+ 
+.logs-section {
   background: #1e293b;
   padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  margin-bottom: 2.5rem;
+}
+
+.logs-section h2 {
+  margin-bottom: 1.6rem;
+  color: white;
+  font-size: 1.55rem;
+}
+
+.log-card {
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 1.6rem;
+  margin-bottom: 1.3rem;
+  border-left: 5px solid #3b82f6;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.3rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #334155;
+}
+
+.log-header h4 {
+  color: #e2e8f0;
+  font-size: 1.15rem;
+}
+
+.log-status {
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.log-status.approved { background: #22c55e; color: #111827; }
+.log-status.submitted { background: #eab308; color: #111827; }
+.log-status.draft { background: #64748b; color: white; }
+.log-status.rejected { background: #ef4444; color: white; }
+
+.log-field {
+  margin-bottom: 1.2rem;
+}
+
+.log-field strong {
+  display: block;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.log-field p {
+  color: #e2e8f0;
+  line-height: 1.65;
+}
+
+.no-logs {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+ 
+.evaluation-form {
+  background: #1e293b;
+  padding: 2.2rem;
   border-radius: 16px;
   border: 1px solid #334155;
 }
 
 .evaluation-form h2 {
-  margin-top: 0;
-  color: #e2e8f0;
-  margin-bottom: 1.5rem;
-}
-
-.form-error {
-  background: #7f1d1d;
-  color: #fecaca;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-}
-
-.criteria-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
+  color: white;
+  font-size: 1.55rem;
 }
 
 .criterion-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background: #334155;
-  padding: 1.4rem 1.8rem;
+  align-items: center;
+  background: #0f172a;
+  padding: 1.2rem 1.6rem;
   border-radius: 12px;
-  gap: 1.5rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid #60a5fa;
 }
 
-.criterion-info {
-  flex: 1;
-}
-
-.criterion-info label {
-  font-weight: 600;
+.criterion-row label {
+  font-weight: 500;
+  color: #e2e8f0;
   font-size: 1.05rem;
-  display: block;
-  margin-bottom: 0.3rem;
 }
 
-.crit-desc {
-  color: #94a3b8;
-  font-size: 0.92rem;
-  margin: 0;
-}
-
-.score-input {
-  width: 140px;
-  padding: 0.9rem;
+.criterion-row input {
+  width: 130px;
+  padding: 12px;
   background: #1e293b;
   border: 1px solid #475569;
   border-radius: 8px;
   color: white;
-  font-size: 1.1rem;
   text-align: center;
+  font-size: 1.15rem;
 }
 
-.comments-section {
-  margin-top: 2rem;
+.criterion-row input:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
 }
 
-.comments-section label {
-  display: block;
-  margin-bottom: 0.8rem;
-  font-weight: 600;
-  color: #cbd5e1;
-}
-
-.comments-section textarea {
+textarea {
   width: 100%;
-  background: #334155;
+  min-height: 160px;
+  background: #0f172a;
   border: 1px solid #475569;
   border-radius: 12px;
+  color: #e2e8f0;
   padding: 1.2rem;
-  color: white;
+  margin: 1.8rem 0;
+  font-family: inherit;
+  font-size: 1.05rem;
   resize: vertical;
-  min-height: 130px;
-  font-size: 1rem;
 }
 
-.submit-btn {
-  width: 100%;
-  background: #22c55e;
-  color: white;
-  border: none;
-  padding: 1.1rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
+.actions {
+  display: flex;
+  gap: 1.2rem;
   margin-top: 2rem;
-  transition: background 0.3s;
+  flex-wrap: wrap;
 }
 
-.submit-btn:hover:not(:disabled) {
-  background: #16a34a;
+.actions button {
+  padding: 13px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.submit-btn:disabled {
-  background: #64748b;
-  cursor: not-allowed;
+.actions button:first-child {
+  background: #475569;
+  color: white;
 }
 
-.loading {
-  text-align: center;
-  margin-top: 100px;
-  font-size: 1.3rem;
-  color: #94a3b8;
+.actions button:last-child {
+  background: #22c55e;
+  color: black;
 }
 
-.error {
-  text-align: center;
-  margin-top: 100px;
-  color: #f87171;
-  font-size: 1.2rem;
+.actions button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
-
-
+ 
 @media (max-width: 768px) {
   .evaluation-container {
-    padding: 1.2rem;
+    padding: 1.2rem 1rem;
   }
-  
+
   .criterion-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
-  .score-input {
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
     width: 100%;
   }
 }

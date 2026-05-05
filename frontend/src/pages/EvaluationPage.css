@@ -19,6 +19,7 @@
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .back-btn:hover {
@@ -30,6 +31,20 @@
   color: white;
 }
 
+.eval-status {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-left: 5px solid #3b82f6;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.eval-status.submitted {
+  border-left: 5px solid #22c55e;
+}
+ 
 .student-info-card {
   background: #1e293b;
   padding: 1.8rem;
@@ -44,12 +59,13 @@
   gap: 1rem;
   margin-top: 1rem;
 }
-
+ 
 .logs-section {
   background: #1e293b;
   padding: 1.8rem;
   border-radius: 16px;
   margin-bottom: 2rem;
+  border: 1px solid #334155;
 }
 
 .logs-list {
@@ -76,40 +92,62 @@
   font-weight: 600;
 }
 
-.status.approved { background: #22c55e; color: black; }
-.status.rejected { background: #ef4444; color: white; }
+.status.approved {
+  background: #22c55e;
+  color: black;
+}
 
+.status.rejected {
+  background: #ef4444;
+  color: white;
+}
+
+.status.submitted {
+  background: #facc15;
+  color: black;
+}
+ 
 .evaluation-form {
   background: #1e293b;
   padding: 2rem;
   border-radius: 16px;
+  border: 1px solid #334155;
+}
+
+.evaluation-form h2 {
+  margin-bottom: 1rem;
 }
 
 .criteria-list {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  margin-top: 1rem;
   margin-bottom: 2rem;
 }
 
 .criterion-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
   background: #334155;
   padding: 1rem 1.5rem;
   border-radius: 12px;
 }
 
-.criterion-info label {
+.criterion-row label {
+  flex: 1;
   font-weight: 500;
 }
 
 .weight {
   color: #94a3b8;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
 }
-
+ 
 .score-input {
   width: 120px;
   padding: 0.8rem;
@@ -118,6 +156,16 @@
   border-radius: 8px;
   color: white;
   text-align: center;
+}
+ 
+input:disabled,
+textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+ 
+.comments-section {
+  margin-top: 1rem;
 }
 
 .comments-section textarea {
@@ -130,7 +178,48 @@
   resize: vertical;
   min-height: 120px;
 }
+ 
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
 
+.actions button {
+  flex: 1;
+  padding: 0.9rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+ 
+.actions button:first-child {
+  background: #64748b;
+  color: white;
+}
+
+.actions button:first-child:hover:not(:disabled) {
+  background: #475569;
+}
+ 
+.actions button:last-child {
+  background: #22c55e;
+  color: black;
+}
+
+.actions button:last-child:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+/* Disabled buttons */
+.actions button:disabled {
+  background: #334155;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+ 
 .submit-evaluation-btn {
   background: #3b82f6;
   color: white;
@@ -142,6 +231,7 @@
   cursor: pointer;
   margin-top: 1.5rem;
   width: 100%;
+  transition: 0.2s;
 }
 
 .submit-evaluation-btn:hover:not(:disabled) {
@@ -151,4 +241,11 @@
 .submit-evaluation-btn:disabled {
   background: #64748b;
   cursor: not-allowed;
+} 
+
+.loading,
+.error {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
 }

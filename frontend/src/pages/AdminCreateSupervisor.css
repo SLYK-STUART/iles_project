@@ -1,0 +1,41 @@
+.admin-form {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #1e293b;
+  border-radius: 10px;
+  color: white;
+}
+
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 6px;
+}
+
+.admin-form button {
+  width: 100%;
+  padding: 10px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.success-box {
+  margin-top: 15px;
+  padding: 10px;
+  background: #16a34a;
+  border-radius: 6px;
+}
+
+.error-box {
+  margin-bottom: 10px;
+  padding: 10px;
+  background: #dc2626;
+  border-radius: 6px;
+}
