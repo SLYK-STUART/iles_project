@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from rest_framework.views import APIView
@@ -7,11 +7,14 @@ from rest_framework import status
 from .serializers import customLoginSerializer
 from .permissions import IsStudent
 from rest_framework.permissions import IsAuthenticated
+from datetime import timedelta, date
+
 
 from django.contrib.auth import get_user_model
 
 from placements.models import InternshipPlacement
 from logbook.models import WeeklyLog, LogReview
+from evaluations.serializers import FinalEvaluationSerializer
 
 class CustomLoginView(APIView):
 
@@ -19,16 +22,27 @@ class CustomLoginView(APIView):
         serializer = customLoginSerializer(data=request.data)
 
         if serializer.is_valid():
-            return Response(serializer.validated_data)
+            data = serializer.validated_data
+
+            return Response({
+                "access": data["access"],
+                "role": data["role"],
+                "must_change_password": data["must_change_password"],
+                "user_id": data.get("user_id")
+            })
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+User = get_user_model()
+
+
 class StudentDashboardView(APIView):
-    permission_classes = [IsAuthenticated, IsStudent] #protected view
+    permission_classes = [IsAuthenticated, IsStudent]
 
     def get(self, request):
         user = request.user
-
+        today = date.today()
+ 
         placement = InternshipPlacement.objects.filter(
             student=user,
             status="ACTIVE"
@@ -38,80 +52,125 @@ class StudentDashboardView(APIView):
             "workplace_supervisor"
         ).first()
 
+        if not placement:
+            return Response({"error": "No active placement found"}, status=404)
+ 
         logs = WeeklyLog.objects.filter(placement=placement)
-
-        submitted = logs.count()
-        pending = logs.filter(status="SUBMITTED").count()
+         
+        log_map = {log.week_start_date: log for log in logs}
+ 
+        total_logs = logs.count()
         approved = logs.filter(status="APPROVED").count()
+        submitted = logs.filter(status="SUBMITTED").count()
         rejected = logs.filter(status="REJECTED").count()
+        pending = logs.filter(status="DRAFT").count()  
+ 
+        start = placement.start_date
+        start = start - timedelta(days=start.weekday())
+
+        end = placement.end_date
+
+        weeks = []
+        total_weeks = 0
+        completed_weeks = 0
+
+        current = start
+        while current <= end:
+            week_end = current + timedelta(days=6)
+
+            log = log_map.get(current)
+
+            is_past = week_end < today
+            is_current = current <= today <= week_end
+
+            missed = False
+            locked = False
+
+            if not log and is_past:
+                missed = True
+                locked = True
+
+            if log:
+                completed_weeks += 1
+
+            weeks.append({
+                "week_start": current.isoformat(),      
+                "week_end": week_end.isoformat(),
+                "status": log.status if log else "MISSING",
+                "log_id": log.id if log else None,
+                "has_log": bool(log),
+                "is_current": is_current,
+                "missed": missed,
+                "locked": locked,
+            })
+
+            total_weeks += 1
+            current += timedelta(days=7)
+
+        
+        placement.calculate_final_score()
+        final_eval_serializer = FinalEvaluationSerializer(placement)
 
         activities = []
-
-        recent_logs = WeeklyLog.objects.filter(
-            placement=placement
-        ).order_by("-created_at")[:5]
-
+ 
+        recent_logs = WeeklyLog.objects.filter(placement=placement).order_by("-created_at")[:5]
         for log in recent_logs:
             activities.append({
                 "type": "log",
-                "message": f"Week {log.week_number} log is created",
+                "message": f"Log for week {log.week_start_date} was created",
                 "date": log.created_at,
             })
-
-        reviews = LogReview.objects.filter(
+ 
+        recent_reviews = LogReview.objects.filter(
             log__placement=placement
-        ).order_by("-reviewed_at")[:5]
+        ).select_related("log").order_by("-reviewed_at")[:5]
 
-        for review in reviews:
+        for review in recent_reviews:
             activities.append({
                 "type": "review",
-                "message": f"Log {log.week_number} {review.new_status.lower()} by supervisor",
+                "message": f"Week {review.log.week_start_date} log was {review.new_status.lower()} by supervisor",
                 "date": review.reviewed_at,
             })
-
-        activities = sorted(
-            activities,
-            key=lambda x: x["date"],
-            reverse=True
-        )[:5]
-
+ 
+        activities = sorted(activities, key=lambda x: x["date"], reverse=True)[:5]
+ 
         student_profile = {
-            "name":f"{request.user.first_name} {request.user.last_name}",
-            "email": request.user.email,
-            "phone": request.user.phone_number,
+            "name": f"{user.first_name} {user.last_name}".strip(),
+            "email": user.email,
+            "phone": getattr(user, 'phone_number', None),
         }
+ 
+        progress_percent = round((completed_weeks / total_weeks) * 100, 1) if total_weeks > 0 else 0
 
         return Response({
-            "message": f"Welcome {request.user.first_name} {request.user.last_name}",
-            "email": request.user.email,
-            "role": request.user.role,
-            
+            "student_profile": student_profile,
             "placement": {
-                "company": placement.company.name if placement else None,
-                "start_date": placement.start_date if placement else None,
-                "end_date": placement.end_date if placement else None,
+                "company": placement.company.name if placement.company else None,
+                "start_date": placement.start_date,
+                "end_date": placement.end_date,
                 "academic_supervisor": (
-                    f"{placement.academic_supervisor.first_name} {placement.academic_supervisor.last_name}"
-                    if placement and placement.academic_supervisor else None,
-                    
+                    f"{placement.academic_supervisor.first_name} {placement.academic_supervisor.last_name}".strip()
+                    if placement.academic_supervisor else None
                 ),
                 "workplace_supervisor": (
-                        f"{placement.workplace_supervisor.first_name} {placement.workplace_supervisor.last_name}"
-                        if placement and placement.workplace_supervisor else None
-                    ),
+                    f"{placement.workplace_supervisor.first_name} {placement.workplace_supervisor.last_name}".strip()
+                    if placement.workplace_supervisor else None
+                ),
             },
-
             "progress": {
+                "total_weeks": total_weeks,
+                "completed_weeks": completed_weeks,
+                "percentage": progress_percent,
+                "total_logs": total_logs,
                 "submitted": submitted,
                 "approved": approved,
                 "rejected": rejected,
                 "pending": pending,
             },
+            "weeks": weeks,                  
             "recent_activity": activities,
-            "student_profile": student_profile,
+            "evaluations": final_eval_serializer.data,
         })
-    
-User = get_user_model()
     
 class AdminUserListView(APIView):
     permission_classes=[IsAuthenticated]
@@ -140,52 +199,63 @@ class AdminUserListView(APIView):
             "total_users": users.count(),
             "users": user_data
         })
-    
+
 class AdminUserDetailView(APIView):
-    """Admin can update user details and role"""
     permission_classes = [IsAuthenticated]
 
+    def _is_admin(self, user):
+        return user.role == "ADMIN"
+    
     def get(self, request, user_id):
-        if request.user.role != "ADMIN":
+        if not self._is_admin(request.user):
             return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
 
-        try:
-            user = User.objects.get(id=user_id)
-            data = {
-                "id": user.id,
-                "email": user.email,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "role": user.role,
-                "phone_number": user.phone_number,
-                "is_active": user.is_active,
-                "date_joined": user.date_joined.strftime("%Y-%m-%d"),
-            }
-            return Response(data)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+        user = get_object_or_404(User, id=user_id)
+
+        return Response({
+            "id": user.id,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "role": user.role,
+            "phone_number": user.phone_number,
+            "is_active": user.is_active,
+            "date_joined": user.date_joined.strftime("%Y-%m-%d"),
+        })
 
     def patch(self, request, user_id):
-        """Update user role, active status, or basic info"""
-        if request.user.role != "ADMIN":
+        if not self._is_admin(request.user):
             return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
 
-        try:
-            user = User.objects.get(id=user_id)
+        user = get_object_or_404(User, id=user_id)
 
-            # Allow updating role, active status, names, phone
-            allowed_fields = ['first_name', 'last_name', 'phone_number', 'role', 'is_active']
+        allowed_fields = ["first_name", "last_name", "phone_number", "is_active"]
 
-            for field in allowed_fields:
-                if field in request.data:
-                    if field == 'role' and request.data['role'] not in ['STUDENT', 'WP_SUP', 'AC_SUP', 'ADMIN']:
-                        return Response({"error": "Invalid role"}, status=400)
-                    setattr(user, field, request.data[field])
+        for field in allowed_fields:
+            if field in request.data:
+                setattr(user, field, request.data[field])
 
-            user.save()
-            return Response({"message": "User updated successfully"})
+        user.save()
 
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
-        except Exception as e:
-            return Response({"error": str(e)}, status=400)        
+        return Response({
+            "message": "User updated successfully",
+            "is_active": user.is_active
+        })
+
+    def delete(self, request, user_id):
+        if not self._is_admin(request.user):
+            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        user = get_object_or_404(User, id=user_id)
+ 
+        if user.id == request.user.id:
+            return Response(
+                {"error": "You cannot delete your own account"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.delete()
+
+        return Response({
+            "message": "User deleted successfully"
+        }, status=status.HTTP_200_OK)
