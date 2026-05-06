@@ -1,35 +1,25 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .student-dashboard {
   min-height: 100vh;
   background: #0f172a;
   color: #e2e8f0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  width: 100%;
 }
-
+ 
 .topbar {
   background: #1e293b;
-  padding: 1.2rem 2.5rem;
+  padding: 1.4rem 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #334155;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   position: sticky;
   top: 0;
   z-index: 100;
-  width: 100%;
 }
 
 .topbar-left h1 {
-  margin: 0;
-  font-size: 1.85rem;
   color: white;
+  font-size: 1.85rem;
   font-weight: 600;
 }
 
@@ -48,14 +38,14 @@
   transition: all 0.3s ease;
 }
 
-.logbook-btn {
-  background: #3b82f6;
+.reviews-btn {
+  background: #64748b;
   color: white;
 }
 
-.logbook-btn:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
+.logbook-btn {
+  background: #3b82f6;
+  color: white;
 }
 
 .logout-btn {
@@ -63,20 +53,18 @@
   color: white;
 }
 
-.logout-btn:hover {
-  background: #dc2626;
+.topbar-right button:hover {
   transform: translateY(-2px);
 }
-
+ 
 .main-content {
-  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 2.5rem;
 }
 
 .welcome h2 {
-  font-size: 2.2rem;
+  font-size: 2.25rem;
   margin-bottom: 2.2rem;
   color: white;
   text-align: center;
@@ -85,7 +73,7 @@
 .welcome span {
   color: #60a5fa;
 }
-
+ 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -104,27 +92,25 @@
 
 .stat-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
 .stat-card h3 {
   color: #94a3b8;
   font-size: 1.1rem;
-  margin-bottom: 0.9rem;
-  font-weight: 500;
+  margin-bottom: 0.8rem;
 }
 
 .stat-number {
   font-size: 2.8rem;
   font-weight: 700;
   color: white;
-  margin: 0;
 }
 
 .stat-card.approved .stat-number { color: #22c55e; }
 .stat-card.submitted .stat-number { color: #eab308; }
 .stat-card.rejected .stat-number { color: #ef4444; }
-
+ 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -147,11 +133,10 @@
 }
 
 .profile-card p, .placement-card p {
-  margin: 1rem 0;
+  margin: 0.9rem 0;
   color: #cbd5e1;
-  line-height: 1.5;
 }
-
+ 
 .evaluation-section {
   margin-bottom: 2.8rem;
 }
@@ -159,7 +144,6 @@
 .evaluation-section h3 {
   color: white;
   margin-bottom: 1.5rem;
-  font-size: 1.75rem;
 }
 
 .final-score-card {
@@ -173,7 +157,6 @@
 
 .final-score-card h2 {
   font-size: 2.4rem;
-  margin-bottom: 0.5rem;
 }
 
 .score {
@@ -192,18 +175,18 @@
   padding: 2rem;
   border-radius: 16px;
   border: 1px solid #334155;
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.6rem;
 }
 
 .eval-card h4 {
   color: #60a5fa;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.6rem;
 }
 
 .evaluator {
   color: #94a3b8;
   font-style: italic;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.4rem;
 }
 
 .criteria-list {
@@ -216,22 +199,17 @@
 .criterion-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   background: #0f172a;
   padding: 1rem 1.4rem;
   border-radius: 12px;
   border-left: 4px solid #3b82f6;
 }
 
-.criterion-item span:first-child {
-  color: #e2e8f0;
-}
-
-.score {
+.criterion-item .score {
   color: #22c55e;
   font-weight: 600;
 }
-
+ 
 .chart-section,
 .activity-section,
 .week-summary {
@@ -252,7 +230,7 @@
 .activity-list {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1rem;
 }
 
 .activity-item {
@@ -262,18 +240,21 @@
   border-left: 5px solid #60a5fa;
 }
 
-.activity-item p {
-  margin: 0 0 0.6rem 0;
-  color: #e2e8f0;
-}
-
 .activity-item small {
   color: #94a3b8;
 }
 
+.no-activity {
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .main-content {
-    padding: 1.5rem 1.2rem;
+  .student-dashboard {
+    padding: 1rem;
   }
 
   .topbar {
@@ -283,23 +264,8 @@
     text-align: center;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
+  .stats-grid,
   .info-grid {
     grid-template-columns: 1fr;
-  }
-
-  .welcome h2 {
-    font-size: 1.9rem;
-  }
-
-  .stat-number {
-    font-size: 2.4rem;
-  }
-
-  .final-score-card h2 {
-    font-size: 2rem;
   }
 }

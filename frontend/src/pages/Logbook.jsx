@@ -102,6 +102,7 @@ export default function Logbook() {
       await API.delete(`logbook/logs/${id}/`);
       fetchData();
     } catch (err) {
+      console.errror(err);
       alert("Failed to delete log.");
     }
   };
@@ -132,6 +133,7 @@ export default function Logbook() {
       fetchData();
       alert("✅ Log updated successfully!");
     } catch (err) {
+      console.error(err);
       alert("Failed to update log.");
     }
   };

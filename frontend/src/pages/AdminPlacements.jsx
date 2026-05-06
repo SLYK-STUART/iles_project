@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
+import API from "../api/axios";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import "./AdminPlacements.css";
 
 export default function AdminPlacements() {
@@ -29,14 +29,23 @@ export default function AdminPlacements() {
 
   const updateStatus = async (id, status) => {
     try {
-      await API.patch(`admin/placements/${id}/`, {
-        status: status,
-      });
-
+      await API.patch(`admin/placements/${id}/`, { status });
       fetchPlacements();
     } catch (err) {
-        console.error(err);
+      console.error(err);
       alert("Failed to update status");
+    }
+  };
+
+  const deletePlacement = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this placement?")) return;
+
+    try {
+      await API.delete(`admin/placements/${id}/`);
+      fetchPlacements();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete placement");
     }
   };
 
@@ -44,44 +53,50 @@ export default function AdminPlacements() {
   if (error) return <p className="error">{error}</p>;
 
   return (
-    <div className="placements-container">
+    <div className="admin-placements-container">
+      {/* Header */}
+      <div className="admin-header">
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <ArrowLeft size={20} />
+          Back
+        </button>
 
-      {/* HEADER */}
-      <div className="placements-header">
-        <h1>Internship Placements</h1>
+        <div className="header-title">
+          <h1>Internship Placements</h1>
+          <p>Manage all student internship assignments</p>
+        </div>
 
-        <button
+        <button 
           className="add-btn"
           onClick={() => navigate("/admin/placement-create")}
         >
-          <Plus size={18} />
-          Add Placement
+          <Plus size={20} />
+          New Placement
         </button>
       </div>
 
-      {/* TABLE */}
+      {/* Table */}
       <div className="table-container">
-        <table>
+        <table className="placements-table">
           <thead>
             <tr>
               <th>Student</th>
               <th>Company</th>
-              <th>WP Supervisor</th>
-              <th>AC Supervisor</th>
-              <th>Start</th>
-              <th>End</th>
+              <th>Workplace Supervisor</th>
+              <th>Academic Supervisor</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {placements.map((p) => (
               <tr key={p.id}>
-
-                <td>{p.student_name}</td>
+                <td className="student-name">{p.student_name}</td>
                 <td>{p.company_name}</td>
-                <td>{p.workplace_supervisor_name}</td>
-                <td>{p.academic_supervisor_name}</td>
+                <td>{p.workplace_supervisor_name || "—"}</td>
+                <td>{p.academic_supervisor_name || "—"}</td>
                 <td>{p.start_date}</td>
                 <td>{p.end_date}</td>
 
@@ -89,7 +104,7 @@ export default function AdminPlacements() {
                   <select
                     value={p.status}
                     onChange={(e) => updateStatus(p.id, e.target.value)}
-                    className={`status ${p.status.toLowerCase()}`}
+                    className={`status-select ${p.status.toLowerCase()}`}
                   >
                     <option value="PENDING">Pending</option>
                     <option value="ACTIVE">Active</option>
@@ -98,16 +113,26 @@ export default function AdminPlacements() {
                   </select>
                 </td>
 
+                <td>
+                  <button 
+                    className="delete-btn"
+                    onClick={() => deletePlacement(p.id)}
+                    title="Delete Placement"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
 
         {placements.length === 0 && (
-          <p className="empty">No placements found</p>
+          <div className="empty-state">
+            No internship placements found
+          </div>
         )}
       </div>
-
     </div>
   );
 }

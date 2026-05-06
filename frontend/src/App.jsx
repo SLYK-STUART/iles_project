@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Router } from "react-router-dom";
 
 import StudentDashboard from "./pages/StudentDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -8,11 +8,20 @@ import Logbook from "./pages/Logbook";
 import WorkplaceDashboard from "./pages/WorkplaceDashboard";
 import AcademicDashboard from "./pages/AcademicDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-
-// Import the new WP Evaluation Form
-import WP_EvaluationPage from "./pages/WP_EvaluationPage";   // ← Change this if your file name is different
-import EvaluationForm from "./pages/EvaluationForm";         // This is for AC_SUP
+ 
+import WP_EvaluationPage from "./pages/WP_EvaluationPage";    
+import EvaluationForm from "./pages/EvaluationForm";         
 import AdminUserManagement from "./pages/AdminUserManagement";
+import WP_LogReviewPage from "./pages/WP-LogReviewPage";
+import StudentReviews from "./pages/StudentReviews";
+import AdminCreateStudent from "./pages/AdminCreateStudent";
+import ChangePassword from "./pages/ChangePassword";
+import AdminCreateSupervisor from "./pages/AdminCreateSupervisor";
+import AdminPlacementCreate from "./pages/AdminPlacementCreate";
+import SystemOverview from "./pages/SystemOverview";
+import AdminPlacements from "./pages/AdminPlacements";
+
+import "react-datepicker/dist/react-datepicker.css"
 
 function App() {
   return (
@@ -90,6 +99,74 @@ function App() {
             <AdminUserManagement />
           </ProtectedRoute>
         }
+      />
+
+      <Route
+        path="wp-supervisor/log/:logId"
+        element={
+          <ProtectedRoute allowedRoles={["WP_SUP"]}>
+            <WP_LogReviewPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student/reviews"
+        element={
+          <ProtectedRoute allowedRoles={["STUDENT"]}>
+            <StudentReviews />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/create-Student"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminCreateStudent />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/create-supervisor"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminCreateSupervisor />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/placement-create"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminPlacementCreate />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/overview"
+        element={
+          <ProtectedRoute allowedRoles={[]}>
+            <SystemOverview />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/placements"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminPlacements />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/change-password"
+        element={<ChangePassword />}
       />
 
       <Route path="*" element={<Login />} />
