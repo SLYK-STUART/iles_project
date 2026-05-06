@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import { ArrowLeft, Plus, Search } from "lucide-react";
+import { ArrowLeft, Plus, Search, RefreshCw } from "lucide-react";
 import "./AdminUserManagement.css";
 
 export default function AdminUserManagement() {
@@ -17,11 +17,13 @@ export default function AdminUserManagement() {
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const res = await API.get("accounts/admin/users/");
       setUsers(res.data.users || []);
     } catch (err) {
       console.error(err);
-      setError("Failed to load users");
+      setError("Failed to load users. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -38,6 +40,7 @@ export default function AdminUserManagement() {
       });
       fetchUsers();
     } catch (err) {
+      console.error(err)
       alert("Failed to update user status");
     }
   };
@@ -49,6 +52,7 @@ export default function AdminUserManagement() {
       await API.delete(`accounts/admin/users/${userId}/`);
       fetchUsers();
     } catch (err) {
+      console.error(err)
       alert("Failed to delete user");
     }
   };
@@ -60,9 +64,6 @@ export default function AdminUserManagement() {
     const matchesRole = roleFilter === "ALL" || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
-
-  if (loading) return <p className="loading">Loading users...</p>;
-  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="admin-container">
@@ -76,7 +77,7 @@ export default function AdminUserManagement() {
           <h1>User Management</h1>
           <p>Manage all system users and their roles</p>
         </div>
- 
+
         <div className="add-user-wrapper">
           <button 
             className="add-user-btn" 
@@ -88,12 +89,8 @@ export default function AdminUserManagement() {
 
           {showAddMenu && (
             <div className="add-menu">
-              <div onClick={() => navigate("/admin/create-student")}>
-                Create Student
-              </div>
-              <div onClick={() => navigate("/admin/create-supervisor")}>
-                Create Supervisor
-              </div>
+              <div onClick={() => navigate("/admin/create-student")}>Create Student</div>
+              <div onClick={() => navigate("/admin/create-supervisor")}>Create Supervisor</div>
             </div>
           )}
         </div>
@@ -121,7 +118,18 @@ export default function AdminUserManagement() {
           <option value="AC_SUP">Academic Supervisor</option>
           <option value="ADMIN">Administrator</option>
         </select>
+
+        <button className="refresh-btn" onClick={fetchUsers} title="Refresh">
+          <RefreshCw size={18} />
+        </button>
       </div>
+ 
+      {error && (
+        <div className="error-box">
+          {error}
+          <button onClick={fetchUsers} className="retry-btn">Retry</button>
+        </div>
+      )}
  
       <div className="users-table-container">
         <table className="users-table">
@@ -176,7 +184,7 @@ export default function AdminUserManagement() {
           </tbody>
         </table>
 
-        {filteredUsers.length === 0 && (
+        {filteredUsers.length === 0 && !error && (
           <div className="no-results">
             No users found matching your criteria.
           </div>

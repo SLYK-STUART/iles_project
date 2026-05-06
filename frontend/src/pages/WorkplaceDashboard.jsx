@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import {
-  Users, ClipboardList, CheckCircle, LogOut, Clock, FileText, Award, Calendar
+  Users, ClipboardList, CheckCircle, LogOut, Clock, FileText, Award, RefreshCw
 } from "lucide-react";
 
 import {
@@ -11,6 +12,8 @@ import {
 import "./SupervisorDashboard.css";
 
 export default function SupervisorDashboard() {
+  const navigate = useNavigate();
+
   const [pendingLogs, setPendingLogs] = useState([]);
   const [students, setStudents] = useState([]);
   const [stats, setStats] = useState({});
@@ -50,15 +53,15 @@ export default function SupervisorDashboard() {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   const handleReviewLog = (logId) => {
-    window.location.href = `/wp-supervisor/log/${logId}`;
+    navigate(`/wp-supervisor/log/${logId}`);
   };
 
   const handleEvaluate = (placementId) => {
-    window.location.href = `/wp-supervisor/evaluate/${placementId}`;
+    navigate(`/wp-supervisor/evaluate/${placementId}`);
   };
 
   const formatTime = (timeStr) => {
@@ -75,7 +78,14 @@ export default function SupervisorDashboard() {
   };
 
   if (loading) return <p className="loading">Loading dashboard...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (error) {
+    return (
+      <div className="error-container">
+        <p className="error">{error}</p>
+        <button onClick={fetchData}>Retry</button>
+      </div>
+    );
+  }
 
   const totalStudents = stats.total_students || 0;
   const pendingReviews = stats.pending_reviews || 0;
@@ -88,11 +98,10 @@ export default function SupervisorDashboard() {
 
   return (
     <div className="sup-container">
- 
       <div className="sup-header-bar">
         <div>
-          <h2>Welcome, {supervisorName}</h2>
-          <p>Manage student logs and performance evaluations</p>
+          <h2>Welcome, {supervisorName} 👋</h2>
+          <p>Manage your students' logs and evaluations</p>
         </div>
         <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={18} /> Logout
@@ -118,9 +127,9 @@ export default function SupervisorDashboard() {
           <p className="stat-number">{completedEvaluations}</p>
         </div>
       </div>
-
-      <div className="sup-main-grid">
  
+      <div className="sup-main-grid">
+        {/* Students Panel */}
         <div className="panel students-panel">
           <div className="panel-header">
             <h3>Assigned Students</h3>
@@ -141,14 +150,12 @@ export default function SupervisorDashboard() {
                 )}
               </div>
 
-              <div className="student-actions">
-                <button 
-                  className="action-btn evaluate-btn"
-                  onClick={() => handleEvaluate(student.placement_id)}
-                >
-                  View(Evaluate)
-                </button>
-              </div>
+              <button 
+                className="evaluate-btn"
+                onClick={() => handleEvaluate(student.placement_id)}
+              >
+                Evaluate
+              </button>
             </div>
           ))}
         </div>
@@ -168,7 +175,7 @@ export default function SupervisorDashboard() {
                 <small>Week of {new Date(log.week_start_date).toDateString()}</small>
               </div>
               <button 
-                className="action-btn review-btn"
+                className="review-btn"
                 onClick={() => handleReviewLog(log.id)}
               >
                 Review
@@ -212,7 +219,6 @@ export default function SupervisorDashboard() {
           </div>
         ))}
       </div>
-
     </div>
   );
 }

@@ -9,11 +9,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
 import "./StudentDashboard.css";
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
+  
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,12 +22,11 @@ export default function StudentDashboard() {
     const fetchDashboard = async () => {
       try {
         const res = await API.get("accounts/student/dashboard/");
-        console.log("DASHBOARD DATA:", res.data);
         setData(res.data);
         setError(null);
       } catch (err) {
-        console.error("DASHBOARD ERROR:", err.response?.data || err);
-        setError(err.response?.data?.error || "Failed to load dashboard");
+        console.error("DASHBOARD ERROR:", err);
+        setError(err.response?.data?.error || "Failed to load dashboard. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -37,40 +36,42 @@ export default function StudentDashboard() {
   }, []);
 
   if (loading) return <p className="loading">Loading dashboard...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (error) {
+    return (
+      <div className="error-container">
+        <p className="error">{error}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
   if (!data) return <p className="error">No data available</p>;
 
   const progress = data?.progress || {};
   const placement = data?.placement || {};
   const weeks = data?.weeks || [];
-  const evaluations = data?.evaluations || {};   
- 
+  const evaluations = data?.evaluations || {};
+
   const chartData = [
     { name: "Approved", value: progress.approved || 0 },
     { name: "Submitted", value: progress.submitted || 0 },
     { name: "Pending", value: progress.pending || 0 },
     { name: "Rejected", value: progress.rejected || 0 },
   ];
- 
+
   const hasEvaluation = evaluations?.final_score !== null && evaluations?.final_score !== undefined;
 
   return (
     <div className="student-dashboard">
+ 
       <div className="topbar">
         <div className="topbar-left">
           <h1>Student Dashboard</h1>
         </div>
         <div className="topbar-right">
-          <button
-            className="reviews-btn"
-            onClick={() => navigate("/student/reviews")}
-          >
+          <button className="reviews-btn" onClick={() => navigate("/student/reviews")}>
             Reviews
           </button>
-          <button 
-            className="logbook-btn"
-            onClick={() => navigate("/logbook")}
-          >
+          <button className="logbook-btn" onClick={() => navigate("/logbook")}>
             📖 My Logbook
           </button>
           <button 
@@ -87,9 +88,7 @@ export default function StudentDashboard() {
 
       <div className="main-content">
         <div className="welcome">
-          <h2>
-            Welcome back, <span>{data?.student_profile?.name || "Student"}</span>
-          </h2>
+          <h2>Welcome back, <span>{data?.student_profile?.name || "Student"}</span></h2>
         </div>
  
         <div className="stats-grid">
@@ -139,12 +138,11 @@ export default function StudentDashboard() {
                 <h3 className="final-grade">Grade: {evaluations.final_grade}</h3>
               )}
             </div>
- 
+
             {evaluations.ac_evaluation && (
               <div className="eval-card">
                 <h4>Academic Supervisor Evaluation</h4>
                 <p className="evaluator">by {evaluations.ac_evaluation.evaluator_name}</p>
-                
                 <div className="criteria-list">
                   {evaluations.ac_evaluation.items?.map(item => (
                     <div key={item.id} className="criterion-item">
@@ -156,12 +154,11 @@ export default function StudentDashboard() {
                 <p><strong>Total:</strong> {evaluations.ac_evaluation.total_score}</p>
               </div>
             )}
- 
+
             {evaluations.wp_evaluation && (
               <div className="eval-card">
                 <h4>Workplace Supervisor Evaluation</h4>
                 <p className="evaluator">by {evaluations.wp_evaluation.evaluator_name}</p>
-                
                 <div className="criteria-list">
                   {evaluations.wp_evaluation.items?.map(item => (
                     <div key={item.id} className="criterion-item">
@@ -183,7 +180,7 @@ export default function StudentDashboard() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="value" fill="#3b82f6" />
+              <Bar dataKey="value" fill="#3b82f6" radius={8} />
             </BarChart>
           </ResponsiveContainer>
         </div>

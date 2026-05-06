@@ -1,38 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from "recharts";
-
 import {
-  Users, FileText, CheckCircle, XCircle, Award, ArrowRight
+  Users, FileText, CheckCircle, XCircle, Award, ArrowRight, ArrowLeft
 } from "lucide-react";
-
 import "./AcademicDashboard.css";
 
 const COLORS = ['#22c55e', '#ef4444', '#3b82f6'];
 
 export default function AcademicDashboard() {
+  const navigate = useNavigate();
+
   const [data, setData] = useState(null);
   const [showAllPlacements, setShowAllPlacements] = useState(false);
   const [showAllLogs, setShowAllLogs] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const res = await API.get("logbook/academic-dashboard/");
-        console.log("Academic Dashboard Data:", res.data);
         setData(res.data);
         setError(null);
       } catch (err) {
-        console.error("Academic Dashboard Error:", err);
+        console.error(err);
         setError("Failed to load dashboard. Please try again.");
       } finally {
         setLoading(false);
@@ -40,18 +36,27 @@ export default function AcademicDashboard() {
     };
 
     fetchDashboard();
+
   }, []);
+  
 
   if (loading) return <p className="loading">Loading dashboard...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (error) {
+    return (
+      <div className="error-container">
+        <p className="error">{error}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
   if (!data) return <p className="error">No data available</p>;
 
   const placementsToShow = showAllPlacements 
-    ? data.placements || []
-    : (data.placements_preview || data.placements?.slice(0, 4) || []);
+    ? data.placements || [] 
+    : (data.placements?.slice(0, 4) || []);
 
   const recentLogs = showAllLogs 
-    ? data.recent_logs || []
+    ? data.recent_logs || [] 
     : (data.recent_logs?.slice(0, 6) || []);
 
   const pieData = [
@@ -67,14 +72,18 @@ export default function AcademicDashboard() {
 
   return (
     <div className="acad-container">
+      <div className="acad-header">
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <ArrowLeft size={20} />
+          Log out
+        </button>
 
-      <div className="header">
-        <div>
+        <div className="header-content">
           <h1>Academic Supervisor Dashboard</h1>
           <p>Monitor student progress and performance</p>
         </div>
       </div>
-
+ 
       <div className="stats-grid">
         <div className="stat-card">
           <Users size={32} />
@@ -99,7 +108,6 @@ export default function AcademicDashboard() {
       </div>
 
       <div className="main-grid">
-
         <div className="panel placements-panel">
           <div className="panel-header">
             <h2>My Students</h2>
@@ -122,23 +130,14 @@ export default function AcademicDashboard() {
                     <p className="company">{placement.company}</p>
                   </div>
 
-                  {placement.pending_evaluation ? (
-                    <button 
-                      className="btn-evaluate prominent"
-                      onClick={() => navigate(`/ac-supervisor/evaluate/${placement.placement_id}`)}
-                    >
-                      <Award size={18} />
-                      View(Evaluate)
-                      <ArrowRight size={16} />
-                    </button>
-                  ) : (
-                    <button 
-                      className="btn-evaluate secondary"
-                      onClick={() => navigate(`/ac-supervisor/evaluate/${placement.placement_id}`)}
-                    >
-                      View(Evaluate)
-                    </button>
-                  )}
+                  <button 
+                    className="btn-evaluate"
+                    onClick={() => navigate(`/ac-supervisor/evaluate/${placement.placement_id}`)}
+                  >
+                    <Award size={18} />
+                    Evaluate
+                    <ArrowRight size={16} />
+                  </button>
                 </div>
 
                 <div className="progress-container">
@@ -148,7 +147,7 @@ export default function AcademicDashboard() {
                       style={{ width: `${placement.progress || 0}%` }}
                     />
                   </div>
-                  <small>{placement.progress || 0}% of placement completed</small>
+                  <small>{placement.progress || 0}% completed</small>
                 </div>
 
                 <div className="placement-stats">
@@ -160,17 +159,16 @@ export default function AcademicDashboard() {
             ))
           )}
         </div>
-
+ 
         <div className="panel analytics-panel">
           <h2>Performance Analytics</h2>
-
           <div className="charts">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={barData}>
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#3b82f6" />
+                <Bar dataKey="value" fill="#3b82f6" radius={8} />
               </BarChart>
             </ResponsiveContainer>
 
@@ -193,7 +191,7 @@ export default function AcademicDashboard() {
           </div>
         </div>
       </div>
-
+ 
       <div className="panel logs-panel">
         <div className="panel-header">
           <h2>Recent Student Logs</h2>
