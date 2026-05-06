@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import "./WP_EvaluationPage.css";
 
-export default function WP_EvaluationPage() {
+export default function EvaluationPage({ title = "Workplace Evaluation" }) {
   const { placementId } = useParams();
   const navigate = useNavigate();
 
@@ -11,19 +11,34 @@ export default function WP_EvaluationPage() {
   const [criteria, setCriteria] = useState([]);
   const [scores, setScores] = useState({});
   const [comments, setComments] = useState("");
+  const [existingEval, setExistingEval] = useState(null);
+  const [logs, setLogs] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await API.get(`/evaluations/placements/${placementId}/`);
-        setData(res.data);
-        setCriteria(res.data.available_criteria || []);
+        const d = res.data;
+
+        setData(d);
+        setCriteria(d.available_criteria || []);
+        setLogs(d.weekly_logs || []);
+        setExistingEval(d.existing_evaluation);
+
+        if (d.existing_evaluation?.exists) {
+          const scoreMap = {};
+          d.existing_evaluation.items.forEach(item => {
+            scoreMap[item.criteria] = item.score;
+          });
+          setScores(scoreMap);
+          setComments(d.existing_evaluation.comments || "");
+        }
       } catch (err) {
         console.error(err);
-        setError("Failed to load evaluation data");
+        alert("Failed to load data");
       } finally {
         setLoading(false);
       }
@@ -31,120 +46,205 @@ export default function WP_EvaluationPage() {
 
     fetchData();
   }, [placementId]);
-
-  const handleScoreChange = (criteriaId, value) => {
-    setScores(prev => ({
-      ...prev,
-      [criteriaId]: parseFloat(value) || 0
-    }));
-    setError("");
-  };
-
-  const handleSubmit = async () => {
-    if (Object.keys(scores).length !== criteria.length) {
-      setError("Please enter scores for all criteria");
-      return;
+ 
+  const calculateStats = () => {
+    if (!data?.start_date) {
+      return {
+        totalWeeks: 0,
+        currentWeek: 0,
+        missingWeeks: 0,
+        today: new Date()
+      };
     }
 
-    setSubmitting(true);
-    setError("");
+    const start = new Date(data.start_date);
+    const today = new Date();
 
+    const diffTime = today - start;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const totalWeeks = Math.floor(diffDays / 7) + 1;
+    const currentWeek = totalWeeks;
+
+    const submittedLogs = logs.length;
+    const missingWeeks = totalWeeks - submittedLogs;
+
+    return {
+      totalWeeks,
+      currentWeek,
+      missingWeeks: missingWeeks > 0 ? missingWeeks : 0,
+      today
+    };
+  };
+
+  const { totalWeeks, currentWeek, missingWeeks, today } = calculateStats();
+ 
+  const handleScoreChange = (criteriaId, value) => {
+    setScores(prev => ({ ...prev, [criteriaId]: parseFloat(value) || 0 }));
+  };
+ 
+  const saveDraft = async () => {
+    setSubmitting(true);
     try {
       const payload = {
         placement: placementId,
         comments: comments.trim(),
         items: criteria.map(c => ({
           criteria: c.id,
-          score: scores[c.id]
+          score: scores[c.id] || 0
         }))
       };
 
-      const evalResponse = await API.post("evaluations/evaluations/", payload);
-
-      if (data?.weekly_logs) {
-        const submittedLogs = data.weekly_logs.filter(log => log.status === "SUBMITTED");
-        
-        for (const log of submittedLogs) {
-          await API.post(`logbook/logs/${log.id}/review/`, {
-            action: "approve",
-            comment: "Auto-approved after performance evaluation"
-          });
-        }
+      if (existingEval?.exists) {
+        await API.put(`evaluations/evaluations/${existingEval.id}/`, payload);
+      } else {
+        const res = await API.post("evaluations/evaluations/", payload);
+        setExistingEval({ exists: true, id: res.data.id, status: "DRAFT" });
       }
 
-      alert("Performance Evaluation submitted and logs approved successfully!");
-      navigate("/wp-supervisor");
-
+      alert("Draft saved successfully!");
     } catch (err) {
-      console.error("Submit error:", err);
-      setError(err.response?.data?.error || "Failed to submit evaluation");
+      console.error(err);
+      alert(err.response?.data?.detail || "Failed to save");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+ 
+  const submitEvaluation = async () => {
+    if (!existingEval?.id) return;
+
+    setSubmitting(true);
+    try {
+      await API.post(`evaluations/evaluations/${existingEval.id}/submit/`);
+      alert("Evaluation submitted successfully!");
+      navigate(-1);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <p className="loading">Loading evaluation form...</p>;
-  if (error && !data) return <p className="error">{error}</p>;
+  const isSubmitted = existingEval?.status === "SUBMITTED";
+
+  if (loading) return <p className="loading">Loading...</p>;
 
   return (
     <div className="evaluation-container">
       <div className="evaluation-header">
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          ← Back to Dashboard
-        </button>
-        <h1>Workplace Performance Evaluation</h1>
+        <button onClick={() => navigate(-1)}>← Back</button>
+        <h1>{title}</h1>
       </div>
-
+ 
       <div className="student-info-card">
-        <h2>Student Information</h2>
-        <div className="info-grid">
-          <p><strong>Name:</strong> {data?.student?.name}</p>
-          <p><strong>Company:</strong> {data?.company}</p>
+        <h2>Student Info</h2>
+        <p><strong>Name:</strong> {data?.student?.name}</p>
+        <p><strong>Company:</strong> {data?.company}</p>
+        <p><strong>Start date:</strong> {data?.start_date}</p>
+        <p><strong>End date:</strong> {data?.end_date}</p>
+ 
+        <div style={{ marginTop: "15px", lineHeight: "1.6" }}>
+          <p><strong>Current Date:</strong> {today.toDateString()}</p>
+          <p><strong>Total Weeks (so far):</strong> {totalWeeks}</p>
+          <p><strong>Current Week:</strong> Week {currentWeek}</p>
+          <p style={{ color: "#ef4444" }}>
+            <strong>Weeks without logs:</strong> {missingWeeks}
+          </p>
         </div>
       </div>
-
-      <div className="evaluation-form">
-        <h2>Performance Criteria</h2>
-        
-        {error && <p className="form-error">{error}</p>}
-
-        <div className="criteria-list">
-          {criteria.map((crit) => (
-            <div key={crit.id} className="criterion-row">
-              <div className="criterion-info">
-                <label>{crit.name}</label>
-                {crit.description && <p className="crit-desc">{crit.description}</p>}
+ 
+      {existingEval?.exists && (
+        <div className="eval-status">
+          <strong>Status:</strong> {existingEval.status}
+        </div>
+      )}
+ 
+      <div className="logs-section">
+        <h2>Student Weekly Logs</h2>
+        {logs.length > 0 ? (
+          logs.map((log, index) => (
+            <div key={index} className="log-card">
+              <div className="log-header">
+                <h4>
+                  Week of{" "}
+                  {new Date(log.week).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                  })}
+                </h4>
+                <span className={`log-status ${log.status.toLowerCase()}`}>
+                  {log.status}
+                </span>
               </div>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                placeholder="0 - 100"
-                value={scores[crit.id] || ""}
-                onChange={(e) => handleScoreChange(crit.id, e.target.value)}
-                className="score-input"
-              />
+
+              <div className="log-content">
+                <div className="log-field">
+                  <strong>Activities:</strong>
+                  <p>{log.activities || "No activities recorded"}</p>
+                </div>
+
+                {log.challenges && (
+                  <div className="log-field">
+                    <strong>Challenges:</strong>
+                    <p>{log.challenges}</p>
+                  </div>
+                )}
+
+                {log.learning_outcomes && (
+                  <div className="log-field">
+                    <strong>Learning Outcomes:</strong>
+                    <p>{log.learning_outcomes}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p className="no-logs">No weekly logs submitted yet.</p>
+        )}
+      </div>
+ 
+      <div className="evaluation-form">
+        <h2>Evaluation Criteria</h2>
 
-        <div className="comments-section">
-          <label>Overall Comments (Optional)</label>
-          <textarea
-            value={comments}
-            onChange={(e) => setComments(e.target.value)}
-            placeholder="Additional feedback about the student's performance..."
-            rows={4}
-          />
-        </div>
+        {criteria.map(c => (
+          <div key={c.id} className="criterion-row">
+            <label>{c.name} <small>({c.weight}%)</small></label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              value={scores[c.id] || ""}
+              disabled={isSubmitted}
+              onChange={(e) => handleScoreChange(c.id, e.target.value)}
+            />
+          </div>
+        ))}
 
-        <button 
-          className="submit-btn"
-          onClick={handleSubmit}
-          disabled={submitting}
-        >
-          {submitting ? "Submitting & Approving Logs..." : "Submit Performance Evaluation & Approve Logs"}
-        </button>
+        <textarea
+          placeholder="Additional comments..."
+          value={comments}
+          disabled={isSubmitted}
+          onChange={(e) => setComments(e.target.value)}
+        />
+
+        {!isSubmitted && (
+          <div className="actions">
+            <button onClick={saveDraft} disabled={submitting}>
+              {existingEval?.exists ? "Update Draft" : "Save Draft"}
+            </button>
+
+            {existingEval?.exists && (
+              <button onClick={submitEvaluation} disabled={submitting}>
+                Submit Final Evaluation
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

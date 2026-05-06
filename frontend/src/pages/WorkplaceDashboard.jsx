@@ -1,22 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import {
-  Users,
-  ClipboardList,
-  CheckCircle,
-  LogOut,
-  Clock,
-  FileText
+  Users, ClipboardList, CheckCircle, LogOut, Clock, FileText, Award, Calendar
 } from "lucide-react";
 
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from "recharts";
 
 import "./SupervisorDashboard.css";
@@ -24,15 +13,20 @@ import "./SupervisorDashboard.css";
 export default function SupervisorDashboard() {
   const [pendingLogs, setPendingLogs] = useState([]);
   const [students, setStudents] = useState([]);
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({});
   const [activity, setActivity] = useState([]);
   const [supervisorName, setSupervisorName] = useState("");
-  const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [showAllStudents, setShowAllStudents] = useState(false);
+  const [showAllLogs, setShowAllLogs] = useState(false);
+  const [showAllActivity, setShowAllActivity] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await API.get("logbook/wp-dashboard/");
       const data = res.data;
@@ -42,10 +36,9 @@ export default function SupervisorDashboard() {
       setPendingLogs(data.pending_logs || []);
       setStats(data.stats || {});
       setActivity(data.recent_activity || []);
-
     } catch (err) {
-      console.error("DASHBOARD ERROR:", err.response?.data || err.message);
-      alert("Failed to load dashboard");
+      console.error(err);
+      setError("Failed to load dashboard. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -55,203 +48,169 @@ export default function SupervisorDashboard() {
     fetchData();
   }, []);
 
-  // ================= HELPERS =================
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    window.location.href = "/login";
   };
 
-  const handleReview = (logId) => {
-    navigate(`/wp-supervisor/log/${logId}`);
+  const handleReviewLog = (logId) => {
+    window.location.href = `/wp-supervisor/log/${logId}`;
   };
 
   const handleEvaluate = (placementId) => {
-    navigate(`/wp-supervisor/evaluate/${placementId}`);
+    window.location.href = `/wp-supervisor/evaluate/${placementId}`;
   };
 
-  const formatTime = (time) => {
-    if (!time) return "";
-
-    const date = new Date(time);
+  const formatTime = (timeStr) => {
+    if (!timeStr) return "Unknown time";
+    const date = new Date(timeStr);
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000);
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
 
-    if (diff < 60) return "just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
-
-    return date.toLocaleDateString();
-  };
-
-  const getActivityIcon = (type) => {
-    if (type === "log") return <FileText size={16} />;
-    if (type === "evaluation") return <CheckCircle size={16} />;
-    return <Clock size={16} />;
+    if (diffMins < 1) return "just now";
+    if (diffMins < 60) return `${diffMins} mins ago`;
+    if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hrs ago`;
+    return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
   };
 
   if (loading) return <p className="loading">Loading dashboard...</p>;
+  if (error) return <p className="error">{error}</p>;
 
-  // ================= STATS =================
-  const totalStudents = stats?.total_students || 0;
-  const pendingCount = stats?.pending_reviews || 0;
-  const completedEvaluations = stats?.completed_evaluations || 0;
+  const totalStudents = stats.total_students || 0;
+  const pendingReviews = stats.pending_reviews || 0;
+  const completedEvaluations = stats.completed_evaluations || 0;
 
   const chartData = [
-    { name: "Pending", value: pendingCount },
-    { name: "Evaluated", value: completedEvaluations },
+    { name: "Pending Reviews", value: pendingReviews },
+    { name: "Evaluations Done", value: completedEvaluations },
   ];
 
   return (
     <div className="sup-container">
-
-      {/* ================= HEADER ================= */}
+ 
       <div className="sup-header-bar">
         <div>
-          <h2>Welcome, {supervisorName} 👋</h2>
-          <p>Manage students, reviews, and evaluations</p>
+          <h2>Welcome, {supervisorName}</h2>
+          <p>Manage student logs and performance evaluations</p>
         </div>
-
         <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={18} /> Logout
         </button>
       </div>
-
-      {/* ================= STATS ================= */}
+ 
       <div className="sup-stats">
-
         <div className="card">
           <Users size={40} />
-          <h3>Students</h3>
-          <p>{totalStudents}</p>
+          <h3>My Students</h3>
+          <p className="stat-number">{totalStudents}</p>
         </div>
 
         <div className="card">
           <ClipboardList size={40} />
-          <h3>Pending Reviews</h3>
-          <p>{pendingCount}</p>
+          <h3>Pending Logs</h3>
+          <p className="stat-number">{pendingReviews}</p>
         </div>
 
         <div className="card">
-          <CheckCircle size={40} />
-          <h3>Evaluations</h3>
-          <p>{completedEvaluations}</p>
+          <Award size={40} />
+          <h3>Evaluations Done</h3>
+          <p className="stat-number">{completedEvaluations}</p>
         </div>
-
       </div>
 
-      <div className="sup-grid">
+      <div className="sup-main-grid">
+ 
+        <div className="panel students-panel">
+          <div className="panel-header">
+            <h3>Assigned Students</h3>
+            <button onClick={() => setShowAllStudents(!showAllStudents)}>
+              {showAllStudents ? "Show Less" : "View All"}
+            </button>
+          </div>
 
-        {/* -------- STUDENTS -------- */}
-        <div className="panel">
-          <h3>Assigned Students</h3>
+          {(showAllStudents ? students : students.slice(0, 5)).map((student) => (
+            <div key={student.placement_id} className="student-item">
+              <div className="student-info">
+                <p className="student-name">{student.student_name}</p>
+                <small>{student.company}</small>
+                {student.missed_weeks > 0 && (
+                  <span className="missed-badge">
+                    {student.missed_weeks} weeks missed
+                  </span>
+                )}
+              </div>
 
-          {students.length === 0 ? (
-            <p className="empty-text">No students assigned</p>
-          ) : (
-            students.slice(0, 3).map((s) => (
-              <div key={s.placement_id} className="item">
-                <div>
-                  <p>{s.student_name}</p>
-                  <small>{s.company}</small>
-                </div>
-
-                <button onClick={() => handleEvaluate(s.placement_id)}>
-                  Evaluate
+              <div className="student-actions">
+                <button 
+                  className="action-btn evaluate-btn"
+                  onClick={() => handleEvaluate(student.placement_id)}
+                >
+                  View(Evaluate)
                 </button>
               </div>
-            ))
-          )}
-
-          <button
-            className="view-all"
-            onClick={() => navigate("/students")}
-          >
-            View All Students
-          </button>
+            </div>
+          ))}
         </div>
+ 
+        <div className="panel logs-panel">
+          <div className="panel-header">
+            <h3>Pending Log Reviews</h3>
+            <button onClick={() => setShowAllLogs(!showAllLogs)}>
+              {showAllLogs ? "Show Less" : "View All"}
+            </button>
+          </div>
 
-        <div className="panel">
-          <h3>Pending Reviews</h3>
-
-          {pendingLogs.length === 0 ? (
-            <p className="empty-text">No pending logs</p>
-          ) : (
-            pendingLogs.slice(0, 3).map((log) => (
-              <div key={log.id} className="item">
-                <div>
-                  <p>Week {log.week_number}</p>
-                  <small>{log.student_name}</small>
-                </div>
-
-                <button onClick={() => handleReview(log.id)}>
-                  Review
-                </button>
+          {(showAllLogs ? pendingLogs : pendingLogs.slice(0, 5)).map((log) => (
+            <div key={log.id} className="log-item">
+              <div>
+                <p><strong>{log.student_name}</strong></p>
+                <small>Week of {new Date(log.week_start_date).toDateString()}</small>
               </div>
-            ))
-          )}
-
-          <button
-            className="view-all"
-            onClick={() => navigate("/logs")}
-          >
-            View All Logs
-          </button>
+              <button 
+                className="action-btn review-btn"
+                onClick={() => handleReviewLog(log.id)}
+              >
+                Review
+              </button>
+            </div>
+          ))}
         </div>
-
-        <div className="panel">
-          <h3>Evaluation Overview</h3>
-
-          <ResponsiveContainer width="100%" height={200}>
+ 
+        <div className="panel chart-panel">
+          <h3>Performance Overview</h3>
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={chartData}>
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="value" />
+              <Bar dataKey="value" fill="#3b82f6" radius={8} />
             </BarChart>
           </ResponsiveContainer>
         </div>
-
       </div>
+ 
+      <div className="panel activity-panel">
+        <div className="panel-header">
+          <h3>Recent Activity</h3>
+          <button onClick={() => setShowAllActivity(!showAllActivity)}>
+            {showAllActivity ? "Show Less" : "View All"}
+          </button>
+        </div>
 
-      <div className="panel">
-        <h3>Recent Activity</h3>
-
-        {activity.length === 0 ? (
-          <p className="empty-text">No recent activity</p>
-        ) : (
-          <div className="activity-list">
-            {activity.map((a, index) => (
-              <div key={index} className="activity-item">
-                <div className="activity-icon">
-                  {getActivityIcon(a.type)}
-                </div>
-
-                <div className="activity-content">
-                  <p>{a.message}</p>
-                  <small>{formatTime(a.time)}</small>
-                </div>
-              </div>
-            ))}
+        {(showAllActivity ? activity : activity.slice(0, 6)).map((a, index) => (
+          <div key={index} className="activity-item">
+            <div className="activity-icon">
+              {a.type === "submission" && <FileText size={20} color="#60a5fa" />}
+              {a.type === "approval" && <CheckCircle size={20} color="#22c55e" />}
+              {a.type === "evaluation" && <Award size={20} color="#a855f7" />}
+            </div>
+            <div className="activity-content">
+              <p>{a.message}</p>
+              <small>{formatTime(a.time)}</small>
+            </div>
           </div>
-        )}
-
-        <button className="view-all">
-          View All Activity
-        </button>
-      </div>
-
-       <div className="quick-actions">
-        <button onClick={() => navigate("/students")}>
-          View Students
-        </button>
-
-        <button onClick={() => navigate("/logs")}>
-          Review Logs
-        </button>
-
-        <button onClick={() => navigate("/reports")}>
-          Reports
-        </button>
+        ))}
       </div>
 
     </div>

@@ -6,263 +6,263 @@ import "./Logbook.css";
 export default function Logbook() {
   const navigate = useNavigate();
 
-  const [logs, setLogs] = useState([]);
+  const [weeks, setWeeks] = useState([]);
+  const [progress, setProgress] = useState({});
   const [loading, setLoading] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false);
-
   const [editingId, setEditingId] = useState(null);
 
   const [form, setForm] = useState({
-    week_number: "",
     activities: "",
     challenges: "",
     learning_outcomes: "",
   });
 
-  const [editForm, setEditForm] = useState(form);
+  const [editForm, setEditForm] = useState({
+    activities: "",
+    challenges: "",
+    learning_outcomes: "",
+  });
 
-  const fetchLogs = async () => {
+  const [currentWeek, setCurrentWeek] = useState(null);
+ 
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await API.get("logbook/logs/");
-      setLogs(res.data);
+      const res = await API.get("accounts/student/dashboard/");
+      setWeeks(res.data.weeks || []);
+      setProgress(res.data.progress || {});
+
+      const current = res.data.weeks?.find((w) => w.is_current);
+      setCurrentWeek(current || null);
     } catch (err) {
-      console.error(err);
-      alert("Failed to load logs.");
+      console.error("Failed to fetch data:", err);
+      alert("Failed to load logbook data");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchLogs();
+    fetchData();
   }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]:
-        name === "week_number"
-          ? value.replace(/[^0-9]/g, "")
-          : value,
-    }));
-  };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!currentWeek || currentWeek.locked) {
+      alert("You cannot create a log for this week.");
+      return;
+    }
+    if (!form.activities.trim()) {
+      alert("Activities field is required.");
+      return;
+    }
+
     try {
       await API.post("logbook/logs/", {
-        ...form,
-        week_number: Number(form.week_number),
+        week_start_date: currentWeek.week_start,
+        activities: form.activities.trim(),
+        challenges: form.challenges.trim(),
+        learning_outcomes: form.learning_outcomes.trim(),
       });
 
-      fetchLogs();
+      alert("✅ Log created successfully!");
+      fetchData();
 
-      setForm({
-        week_number: "",
-        activities: "",
-        challenges: "",
-        learning_outcomes: "",
-      });
-
+      setForm({ activities: "", challenges: "", learning_outcomes: "" });
     } catch (err) {
-      console.error(err);
-      alert("Failed to create log");
+      const errorMsg =
+        err.response?.data?.non_field_errors?.[0] ||
+        err.response?.data?.detail ||
+        "Failed to create log.";
+      alert(errorMsg);
     }
-  };
+  }; 
 
   const submitLog = async (id) => {
+    if (!confirm("Submit this log? You will not be able to edit it afterwards.")) return;
+
     try {
       await API.post(`logbook/logs/${id}/submit/`);
-      fetchLogs();
-    } catch {
-      alert("Failed to submit log");
+      alert("✅ Log submitted successfully!");
+      fetchData();
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        "Failed to submit log.";
+      alert(`❌ ${errorMsg}`);
     }
   };
-
+ 
   const deleteLog = async (id) => {
+    if (!confirm("Delete this log? This action cannot be undone.")) return;
+
     try {
       await API.delete(`logbook/logs/${id}/`);
-      fetchLogs();
-    } catch {
-      alert("Delete failed");
+      fetchData();
+    } catch (err) {
+      alert("Failed to delete log.");
     }
   };
-
-  const startEdit = (log) => {
-    setEditingId(log.id);
-    setEditForm(log);
+ 
+  const startEdit = (week) => {
+    setEditingId(week.log_id);
+    setEditForm({
+      activities: week.activities || "Activities",
+      challenges: week.challenges || "Challenges",
+      learning_outcomes: week.learning_outcomes || "Lessons",
+    });
   };
-
+ 
   const saveEdit = async (id) => {
+    if (!editForm.activities.trim()) {
+      alert("Activities field is required.");
+      return;
+    }
+
     try {
       await API.put(`logbook/logs/${id}/`, {
-        ...editForm,
-        week_number: Number(editForm.week_number),
+        activities: editForm.activities.trim(),
+        challenges: editForm.challenges.trim(),
+        learning_outcomes: editForm.learning_outcomes.trim(),
       });
+
       setEditingId(null);
-      fetchLogs();
-    } catch {
-      alert("Update failed");
+      fetchData();
+      alert("✅ Log updated successfully!");
+    } catch (err) {
+      alert("Failed to update log.");
     }
   };
 
-  const total = logs.length;
-  const draft = logs.filter(l => l.status === "DRAFT").length;
-  const submitted = logs.filter(l => l.status === "SUBMITTED").length;
-  const approved = logs.filter(l => l.status === "APPROVED").length;
+  const cancelEdit = () => setEditingId(null);
 
-  if (loading) return <p className="loading">Loading...</p>;
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
+  if (loading) return <p className="loading">Loading logbook...</p>;
 
   return (
     <div className="dashboard">
-
-      {/* ================= SIDEBAR ================= */}
-      <div className="sidebar">
-        <h2>Logbook</h2>
-        <ul>
-          <li onClick={() => navigate("/student")}>Dashboard</li>
-          <li className="active">Logbook</li>
-          <li>Reports</li>
-          <li>Profile</li>
-        </ul>
+      <div className="header">
+        <button onClick={() => navigate("/student")}>⬅ Back to Dashboard</button>
+        <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* ================= MAIN ================= */}
       <div className="main">
-
         <h1>Your Logbook</h1>
-
-        {/* ================= STATS ================= */}
-        <div className="cards">
-          <div className="card">
-            <h3>Total Logs</h3>
-            <p>{total}</p>
+ 
+        <div className="progress-container">
+          <div className="progress-bar">
+            <div
+              className="progress-fill"
+              style={{ width: `${progress.percentage || 0}%` }}
+            />
           </div>
-
-          <div className="card">
-            <h3>Draft</h3>
-            <p>{draft}</p>
-          </div>
-
-          <div className="card">
-            <h3>Submitted</h3>
-            <p>{submitted}</p>
-          </div>
-
-          <div className="card">
-            <h3>Approved</h3>
-            <p>{approved}</p>
-          </div>
+          <p>{progress.percentage || 0}% Completed</p>
         </div>
-
+ 
         <div className="chart-section">
-          <h2>Create New Log</h2>
+          <h2>Create Weekly Log</h2>
 
-          <form className="logbook-form" onSubmit={handleSubmit}>
-            <input
-              type="number"
-              name="week_number"
-              placeholder="Week Number"
-              value={form.week_number}
-              onChange={handleChange}
-              required
-            />
+          {currentWeek && !currentWeek.has_log && !currentWeek.locked ? (
+            <>
+              <p>
+                Week: {new Date(currentWeek.week_start).toDateString()} →{" "}
+                {new Date(currentWeek.week_end).toDateString()}
+              </p>
 
-            <textarea
-              name="activities"
-              placeholder="Activities"
-              value={form.activities}
-              onChange={handleChange}
-              required
-            />
-
-            <textarea
-              name="challenges"
-              placeholder="Challenges"
-              value={form.challenges}
-              onChange={handleChange}
-            />
-
-            <textarea
-              name="learning_outcomes"
-              placeholder="Learning Outcomes"
-              value={form.learning_outcomes}
-              onChange={handleChange}
-            />
-
-            <button className="btn-primary">Create Log</button>
-          </form>
-        </div>
-
-        <div className="activity">
-          <h2>Your Logs</h2>
-
-          {logs.length === 0 ? (
-            <p>No logs yet</p>
+              <form onSubmit={handleSubmit} className="logbook-form">
+                <textarea
+                  placeholder="Activities (required)"
+                  value={form.activities}
+                  onChange={(e) => setForm({ ...form, activities: e.target.value })}
+                  required
+                />
+                <textarea
+                  placeholder="Challenges faced"
+                  value={form.challenges}
+                  onChange={(e) => setForm({ ...form, challenges: e.target.value })}
+                />
+                <textarea
+                  placeholder="Learning outcomes"
+                  value={form.learning_outcomes}
+                  onChange={(e) => setForm({ ...form, learning_outcomes: e.target.value })}
+                />
+                <button type="submit" className="btn-primary">
+                  Create Log
+                </button>
+              </form>
+            </>
           ) : (
-            logs.map((log) => (
-              <div key={log.id} className="log-card">
+            <p style={{ color: "gray" }}>
+              You can only create a log for the current unlocked week.
+            </p>
+          )}
+        </div>
+ 
+        <div className="activity">
+          <h2>Weekly Timeline</h2>
 
-                {editingId === log.id ? (
-                  <>
-                    <input
-                      value={editForm.week_number}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, week_number: e.target.value })
-                      }
-                    />
+          {weeks.map((week, index) => (
+            <div key={index} className="log-card">
+              <div className="log-header">
+                <span>
+                  {new Date(week.week_start).toDateString()} →{" "}
+                  {new Date(week.week_end).toDateString()}
+                </span>
+                <span className={`status ${week.status?.toLowerCase() || ""}`}>
+                  {week.status || "Unknown"}
+                </span>
+              </div>
 
-                    <textarea
-                      value={editForm.activities}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, activities: e.target.value })
-                      }
-                    />
+              {week.missed && <p style={{ color: "red" }}>⚠ Missed week — locked</p>}
 
-                    <div className="log-actions">
-                      <button onClick={() => saveEdit(log.id)}>Save</button>
-                      <button onClick={() => setEditingId(null)}>Cancel</button>
+              {!week.has_log && !week.is_current && (
+                <p style={{ color: "gray" }}>No log created</p>
+              )}
+
+              {week.has_log && (
+                <>
+                  {editingId === week.log_id ? (
+                     <div className="edit-mode">
+                      <textarea
+                        value={editForm.activities}
+                        onChange={(e) => setEditForm({ ...editForm, activities: e.target.value })}
+                      />
+                      <textarea
+                        value={editForm.challenges}
+                        onChange={(e) => setEditForm({ ...editForm, challenges: e.target.value })}
+                      />
+                      <textarea
+                        value={editForm.learning_outcomes}
+                        onChange={(e) => setEditForm({ ...editForm, learning_outcomes: e.target.value })}
+                      />
+
+                      <div className="log-actions">
+                        <button onClick={() => saveEdit(week.log_id)}>Save Changes</button>
+                        <button onClick={cancelEdit}>Cancel</button>
+                      </div>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="log-header">
-                      <span>Week {log.week_number}</span>
-                      <span className={`status ${log.status.toLowerCase()}`}>
-                        {log.status}
-                      </span>
-                    </div>
-
-                    <p><strong>Activities</strong></p>
-                    <ul className="activities-list">
-                      {log.activities.split("\n").map((item, i) => (
-                        <li key={i}>{item.trim()}</li>
-                      ))}
-                    </ul>
-
-                    <div className="log-actions">
-                      {log.status === "DRAFT" && (
+                  ) : (
+                     <div className="log-actions">
+                      {week.status === "DRAFT" && (
                         <>
-                          <button onClick={() => startEdit(log)}>Edit</button>
-                          <button onClick={() => deleteLog(log.id)}>Delete</button>
-                          <button onClick={() => submitLog(log.id)}>
-                            Submit
-                          </button>
+                          <button onClick={() => startEdit(week)}>Edit</button>
+                          <button onClick={() => deleteLog(week.log_id)}>Delete</button>
+                          <button onClick={() => submitLog(week.log_id)}>Submit</button>
                         </>
                       )}
                     </div>
-                  </>
-                )}
-
-              </div>
-            ))
-          )}
+                  )}
+                </>
+              )}
+            </div>
+          ))}
         </div>
-
       </div>
     </div>
   );

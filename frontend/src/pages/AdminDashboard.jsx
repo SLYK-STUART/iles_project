@@ -3,14 +3,11 @@ import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import {
   Users,
-  UserCheck,
-  Briefcase,
-  Building2,
+  BarChart3,
   FileText,
-  Award,
+  LogOut,
   Activity,
   Clock,
-  AlertTriangle,
 } from "lucide-react";
 
 import {
@@ -50,113 +47,73 @@ export default function AdminDashboard() {
     fetchDashboard();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   if (loading) return <p className="loading">Loading dashboard...</p>;
   if (error) return <p className="error">{error}</p>;
-  if (!data) return <p className="empty">No data available</p>;
 
   const logStatusData = [
-    { name: "Submitted", value: data.submitted_logs, fill: "#eab308" },
-    { name: "Approved", value: data.approved_logs, fill: "#22c55e" },
-    { name: "Rejected", value: data.rejected_logs, fill: "#ef4444" },
+    { name: "Submitted", value: data.logs.submitted },
+    { name: "Approved", value: data.logs.approved },
+    { name: "Rejected", value: data.logs.rejected },
   ];
 
   const placementStatusData = [
-    { name: "Pending", value: data.pending_placements, fill: "#f59e0b" },
-    { name: "Active", value: data.active_placements, fill: "#3b82f6" },
-    { name: "Completed", value: data.completed_placements, fill: "#22c55e" },
-    { name: "Cancelled", value: data.cancelled_placements, fill: "#ef4444" },
+    { name: "Pending", value: data.placements.pending, fill: "#f59e0b" },
+    { name: "Active", value: data.placements.active, fill: "#3b82f6" },
+    { name: "Completed", value: data.placements.completed, fill: "#22c55e" },
+    { name: "Cancelled", value: data.placements.cancelled, fill: "#ef4444" },
   ];
 
-  return (
+   return (
     <div className="admin-container">
-      <h1 className="admin-title">Administrator Dashboard</h1>
-      <p className="welcome-text">System Overview • Real-time Insights</p>
 
-      <div className="stats-grid">
-        <div className="stat-card">
-          <Users size={32} />
-          <h3>Total Users</h3>
-          <p className="number">{data.total_users}</p>
+      {/* ================= HEADER ================= */}
+      <div className="admin-header">
+        <div>
+          <h1>Administrator Dashboard</h1>
+          <p>System Overview • Real-time Insights</p>
         </div>
 
-        <div className="stat-card">
-          <UserCheck size={32} />
-          <h3>Students</h3>
-          <p className="number">{data.total_students}</p>
-        </div>
-
-        <div className="stat-card">
-          <Award size={32} />
-          <h3>Academic Sup.</h3>
-          <p className="number">{data.total_ac_supervisors}</p>
-        </div>
-
-        <div className="stat-card">
-          <Award size={32} />
-          <h3>Workplace Sup.</h3>
-          <p className="number">{data.total_wp_supervisors}</p>
-        </div>
-
-        <div className="stat-card">
-          <Building2 size={32} />
-          <h3>Companies</h3>
-          <p className="number">{data.total_companies}</p>
-        </div>
-
-        <div className="stat-card">
-          <Briefcase size={32} />
-          <h3>Total Placements</h3>
-          <p className="number">{data.total_placements}</p>
-        </div>
-
-        <div className="stat-card">
-          <Activity size={32} />
-          <h3>Active Placements</h3>
-          <p className="number">{data.active_placements}</p>
-        </div>
-
-        <div className="stat-card highlight">
-          <Clock size={32} />
-          <h3>Pending Logs</h3>
-          <p className="number">{data.pending_logs}</p>
-        </div>
-
-        <div className="stat-card">
-          <Award size={32} />
-          <h3>Approval Rate</h3>
-          <p className="number">{data.approval_rate}%</p>
-        </div>
-
-        <div className="stat-card">
-          <AlertTriangle size={32} />
-          <h3>No Placement</h3>
-          <p className="number">{data.students_without_placement}</p>
-        </div>
-
-        <div className="stat-card">
-          <FileText size={32} />
-          <h3>Total Logs</h3>
-          <p className="number">{data.total_logs}</p>
-        </div>
-
-        <div className="stat-card">
-          <Award size={32} />
-          <h3>Total Evaluations</h3>
-          <p className="number">{data.total_evaluations}</p>
-        </div>
-
-        <div className="stat-card" onClick={() => navigate("/admin/users")} style={{ cursor: "pointer"}}>
-          <useCog size={32} />
-          <h3>User Management</h3>
-          <p className="number">{data.total_users}</p>
-          <small style={{color: "#94a3b8"}}>Manage users and roles</small>
-        </div>
+        <button
+          className="logout-btn"
+          onClick={() => {
+            handleLogout()
+          }}
+        >
+          Logout
+        </button>
       </div>
 
+    {/* ================= ACTION CARDS ================= */}
+      <div className="admin-actions">
+
+        <div className="action-card" onClick={() => navigate("/admin/users")}>
+          <h3>Manage Users</h3>
+          <p>Students, supervisors & roles</p>
+        </div>
+
+        <div className="action-card" onClick={() => navigate("/admin/overview")}>
+          <h3>System Overview</h3>
+          <p>Full analytics & statistics</p>
+        </div>
+
+        <div className="action-card" onClick={() => navigate("/admin/placements")}>
+          <h3>Internships</h3>
+          <p>Add Internships</p>
+        </div>
+
+      </div>
+
+    {/* ================= CHARTS SIDE BY SIDE ================= */}
       <div className="charts-grid">
+
         <div className="chart-box">
           <h3>Log Status Overview</h3>
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart data={logStatusData}>
               <XAxis dataKey="name" />
               <YAxis />
@@ -168,7 +125,7 @@ export default function AdminDashboard() {
 
         <div className="chart-box">
           <h3>Placement Status</h3>
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
                 data={placementStatusData}
@@ -179,33 +136,58 @@ export default function AdminDashboard() {
                 dataKey="value"
               >
                 {placementStatusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                  <Cell key={index} fill={entry.fill} />
                 ))}
               </Pie>
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
         </div>
+
       </div>
 
-      <div className="recent-section">
-        <h3>Recent Users</h3>
-        {data.recent_users && data.recent_users.length > 0 ? (
-          <div className="recent-list">
-            {data.recent_users.map((user) => (
+    {/* ================= RECENT SECTION SIDE BY SIDE ================= */}
+      <div className="recent-grid">
+
+        {/* RECENT USERS */}
+        <div className="section">
+          <h3>Recent Users</h3>
+
+          {data.recent_users?.length ? (
+            data.recent_users.map((user) => (
               <div key={user.id} className="recent-item">
                 <div>
                   <strong>{user.name}</strong>
-                  <span className="role-badge">{user.role}</span>
+                  <span>{user.role}</span>
                 </div>
-                <span className="date">Joined {user.joined}</span>
+                <small>{user.joined}</small>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p>No recent users</p>
-        )}
+            ))
+          ) : (
+            <p>No recent users</p>
+          )}
+        </div>
+
+      {/* RECENT ACTIVITIES */}
+        <div className="section">
+          <h3>Recent Activities</h3>
+
+          {data.recent_activities?.length ? (
+            data.recent_activities.map((act, index) => (
+              <div key={index} className="activity-item">
+                <div>
+                  <strong>{act.title}</strong>
+                </div>
+                <small>{act.time}</small>
+              </div>
+            ))
+          ) : (
+            <p>No recent activity</p>
+          )}
+        </div>
+
       </div>
+
     </div>
   );
 }
