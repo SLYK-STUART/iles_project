@@ -1,0 +1,64 @@
+.placement-container {
+  padding: 2rem;
+  background: #0f172a;
+  min-height: 100vh;
+  color: white;
+}
+
+.placement-container h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 2rem;
+}
+
+.placement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+}
+
+.placement-form select,
+.placement-form input,
+.placement-form textarea {
+  padding: 12px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  color: white;
+}
+
+.placement-form textarea {
+  min-height: 100px;
+  resize: none;
+}
+
+.placement-form button {
+  padding: 12px;
+  background: #22c55e;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.placement-form button:hover {
+  background: #16a34a;
+}
+
+.error-box {
+  background: #ef4444;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.success-box {
+  background: #22c55e;
+  color: black;
+  padding: 10px;
+  border-radius: 8px;
+}
