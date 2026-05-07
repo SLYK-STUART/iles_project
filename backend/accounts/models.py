@@ -1,16 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
-# Create your models here.
-#Base user manager is a django helper used to control how users are created and saved
+# Create your models here. 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Users must have an email")
         
-        email = self.normalize_email(email) #from TEST@GMAIL.COM to test@gmail.com
+        email = self.normalize_email(email) 
         user = self.model(email=email, **extra_fields)
-        user.set_password(password) #hash the password
+        user.set_password(password)
         user.save()
         return user
     
@@ -27,8 +26,13 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
     
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
+        super().save(*args, **kwargs)
+    
 class CustomUser(AbstractUser):
-    username = None #remove username field
+    username = None
 
     ROLE_CHOICES = (
         ('STUDENT', 'Student'),
@@ -45,10 +49,12 @@ class CustomUser(AbstractUser):
     )
     phone_number = models.CharField(max_length=20, blank=True, null=True)
 
+    must_change_password = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
-    objects = CustomUserManager() #use my logic when creating users
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.email 
