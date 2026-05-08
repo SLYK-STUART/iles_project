@@ -26,9 +26,9 @@ import "react-datepicker/dist/react-datepicker.css"
 function App() {
   return (
     <Routes>
-
+ 
       <Route path="/" element={<Login />} />
-
+ 
       <Route
         path="/logbook"
         element={
@@ -37,7 +37,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+ 
       <Route
         path="/student"
         element={
@@ -46,7 +46,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+ 
       <Route
         path="/wp-supervisor"
         element={
@@ -55,7 +55,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+ 
       <Route
         path="/ac-supervisor"
         element={
@@ -64,7 +64,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+ 
       <Route
         path="/admin"
         element={
@@ -73,7 +73,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+ 
       <Route
         path="/ac-supervisor/evaluate/:placementId"
         element={
@@ -82,7 +82,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+ 
       <Route
         path="/wp-supervisor/evaluate/:placementId"
         element={
@@ -121,47 +121,7 @@ function App() {
 
       <Route
         path="/admin/create-Student"
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminCreateStudent />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/create-supervisor"
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminCreateSupervisor />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/placement-create"
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminPlacementCreate />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/overview"
-        element={
-          <ProtectedRoute allowedRoles={[]}>
-            <SystemOverview />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/placements"
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]}>
-            <AdminPlacements />
-          </ProtectedRoute>
-        }
+        element={<AdminCreateStudent />}
       />
 
       <Route
@@ -169,6 +129,26 @@ function App() {
         element={<ChangePassword />}
       />
 
+      <Route
+        path="/admin/create-supervisor"
+        element={<AdminCreateSupervisor />}
+      />
+
+      <Route  
+        path="/admin/placement-create"
+        element={<AdminPlacementCreate />}
+      />
+
+      <Route
+        path="/admin/overview"
+        element={<SystemOverview />}
+      />
+
+      <Route
+        path="/admin/placements"
+        element={<AdminPlacements />}
+      />
+ 
       <Route path="*" element={<Login />} />
 
     </Routes>

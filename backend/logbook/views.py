@@ -346,7 +346,6 @@ class AdminDashboardView(APIView):
 
             "recent_users": recent_users_data,
         })
-    
 class WorkplaceDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 

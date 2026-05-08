@@ -92,6 +92,10 @@ class StudentDashboardView(APIView):
 
             if log:
                 completed_weeks += 1
+                if log.status == "REJECTED":
+                    display_status="DRAFT"
+                else:
+                    display_status = log.status
 
             weeks.append({
                 "week_start": current.isoformat(),      
