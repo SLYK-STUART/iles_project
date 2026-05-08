@@ -6,5 +6,5 @@ urlpatterns = [
     path('student/dashboard/', StudentDashboardView.as_view(), name='student-dashbaord'),
 
     path('admin/users/', AdminUserListView.as_view(), name='admin-user-list'),
-    path('admin/users<int:user_id>/', AdminUserDetailView.as_view(), name='admin-user-detail'),
+    path('admin/users/<int:user_id>/', AdminUserDetailView.as_view(), name='admin-user-detail'),
 ]
