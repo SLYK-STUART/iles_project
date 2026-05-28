@@ -26,11 +26,6 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
     
-    def save(self, *args, **kwargs):
-        if self.email:
-            self.email = self.email.lower()
-        super().save(*args, **kwargs)
-    
 class CustomUser(AbstractUser):
     username = None
 
@@ -43,7 +38,7 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField(unique=True)
     role = models.CharField(
-        max_length=10, 
+        max_length=20, 
         choices=ROLE_CHOICES,
         default='STUDENT'
     )
@@ -55,6 +50,11 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.email 
