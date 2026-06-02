@@ -1,0 +1,34 @@
+.divider {
+  border: none;
+  border-top: 1px solid var(--sd-border);
+  margin: 0;
+  width: 100%;
+}
+ 
+.divider--labeled {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--sd-border);
+  display: block;
+}
+
+.divider-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--sd-text-faint);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+ 
+.divider--sm { margin-block: 0.5rem; }
+.divider--md { margin-block: 1rem;   }
+.divider--lg { margin-block: 1.75rem; }
