@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import { ArrowLeft, UserPlus } from "lucide-react";
+import { ArrowLeft, UserPlus, Mail, User } from "lucide-react";
 import "./AdminCreateStudent.css";
 
 export default function AdminCreateStudent() {
@@ -52,9 +52,8 @@ export default function AdminCreateStudent() {
       }
 
       const res = await API.post("admin/create-student/", payload);
-
       setResult(res.data);
- 
+
       setForm({
         first_name: "",
         last_name: "",
@@ -76,68 +75,94 @@ export default function AdminCreateStudent() {
   };
 
   return (
-    <div className="admin-create-container">
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        <ArrowLeft size={20} />
-        Back
-      </button>
+    <div className="admin-page">
+ 
+      <div className="admin-topbar">
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <ArrowLeft size={18} />
+          Back
+        </button>
 
-      <div className="form-card">
-        <div className="form-header">
-          <UserPlus size={32} />
-          <h1>Create New Student</h1>
-          <p>Fill in the details to register a new student</p>
+        <div className="topbar-title">
+          <h1>Create Student</h1>
+          <p>Register a new student into the system</p>
         </div>
 
-        {error && <div className="error-box">{error}</div>}
-        {result && (
-          <div className="success-box">
-            <h3>Student Created Successfully!</h3>
-            <p><strong>Name:</strong> {result.student?.name}</p>
-            <p><strong>Email:</strong> {result.student?.email}</p>
-            <p><strong>Temporary Password:</strong> {result.student?.temp_password}</p>
+        <div className="topbar-icon">
+          <UserPlus size={20} />
+        </div>
+      </div>
+ 
+      <div className="admin-content">
+ 
+        {error && (
+          <div className="alert error">
+            {error}
           </div>
         )}
 
-        <div className="form-content">
-          <div className="input-group">
-            <label>First Name</label>
-            <input
-              name="first_name"
-              placeholder="Enter first name"
-              value={form.first_name}
-              onChange={handleChange}
-            />
+        {result && (
+          <div className="alert success">
+            <strong>Student created successfully!</strong>
+            <div className="alert-details">
+              <p><User size={14} /> {result.student?.name}</p>
+              <p><Mail size={14} /> {result.student?.email}</p>
+              <p><strong>Temp Password:</strong> {result.student?.temp_password}</p>
+            </div>
+          </div>
+        )}
+ 
+        <div className="form-card">
+
+          <div className="form-section">
+            <h3>Student Information</h3>
+
+            <div className="form-grid">
+
+              <div className="input-group">
+                <label>First Name</label>
+                <input
+                  name="first_name"
+                  placeholder="Enter first name"
+                  value={form.first_name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Last Name</label>
+                <input
+                  name="last_name"
+                  placeholder="Enter last name"
+                  value={form.last_name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-group full">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="student@example.com"
+                  value={form.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+            </div>
+          </div>
+ 
+          <div className="form-actions">
+            <button
+              className="submit-btn"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Creating Student..." : "Create Student"}
+            </button>
           </div>
 
-          <div className="input-group">
-            <label>Last Name</label>
-            <input
-              name="last_name"
-              placeholder="Enter last name"
-              value={form.last_name}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="student@example.com"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button 
-            className="submit-btn" 
-            onClick={handleSubmit} 
-            disabled={loading}
-          >
-            {loading ? "Creating Student..." : "Create Student"}
-          </button>
         </div>
       </div>
     </div>
