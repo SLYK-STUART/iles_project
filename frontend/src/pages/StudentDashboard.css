@@ -799,7 +799,7 @@
     font-size: 22px;
   }
 
-  .sd-topbar-right .sd-btn-ghost:not(:last-child) {
+  .sd-topbar-right{
     display: none;
   }
 }
