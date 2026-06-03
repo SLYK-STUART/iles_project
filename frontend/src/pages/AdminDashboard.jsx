@@ -68,126 +68,234 @@ export default function AdminDashboard() {
     { name: "Cancelled", value: data.placements.cancelled, fill: "#ef4444" },
   ];
 
-   return (
-    <div className="admin-container">
+  return (
+  <div className="admin-dashboard">
+ 
+    <header className="ad-topbar">
+      <div className="ad-topbar-left">
+        <span className="ad-logo-mark">AD</span>
+        <h1>Administrator Dashboard</h1>
+      </div>
 
-      {/* ================= HEADER ================= */}
-      <div className="admin-header">
-        <div>
-          <h1>Administrator Dashboard</h1>
-          <p>System Overview • Real-time Insights</p>
-        </div>
+      <nav className="ad-topbar-right">
+        <button
+          className="ad-btn ad-btn-ghost"
+          onClick={() => navigate("/admin/users")}
+        >
+          Manage Users
+        </button>
 
         <button
-          className="logout-btn"
-          onClick={() => {
-            handleLogout()
-          }}
+          className="ad-btn ad-btn-ghost"
+          onClick={() => navigate("/admin/overview")}
+        >
+          System Overview
+        </button>
+
+        <button
+          className="ad-btn ad-btn-ghost"
+          onClick={() => navigate("/admin/placements")}
+        >
+          Internships
+        </button>
+
+        <button
+          className="ad-btn ad-btn-danger"
+          onClick={handleLogout}
         >
           Logout
         </button>
+      </nav>
+    </header>
+
+    <main className="ad-main">
+ 
+      <div className="ad-welcome">
+        <h2>Administrator Dashboard</h2>
+        <p className="ad-subtitle">
+          Monitor placements, users, and internship activity.
+        </p>
       </div>
+ 
+      <section className="ad-section">
+        <div className="ad-stats-grid">
 
-    {/* ================= ACTION CARDS ================= */}
-      <div className="admin-actions">
+          <div className="ad-stat-card">
+            <span className="ad-stat-label">Submitted Logs</span>
+            <span className="ad-stat-num">
+              {data.logs.submitted}
+            </span>
+          </div>
 
-        <div className="action-card" onClick={() => navigate("/admin/users")}>
-          <h3>Manage Users</h3>
-          <p>Students, supervisors & roles</p>
+          <div className="ad-stat-card approved">
+            <span className="ad-stat-label">Approved Logs</span>
+            <span className="ad-stat-num">
+              {data.logs.approved}
+            </span>
+          </div>
+
+          <div className="ad-stat-card rejected">
+            <span className="ad-stat-label">Rejected Logs</span>
+            <span className="ad-stat-num">
+              {data.logs.rejected}
+            </span>
+          </div>
+
+          <div className="ad-stat-card">
+            <span className="ad-stat-label">Active Placements</span>
+            <span className="ad-stat-num">
+              {data.placements.active}
+            </span>
+          </div>
+
         </div>
+      </section>
 
-        <div className="action-card" onClick={() => navigate("/admin/overview")}>
-          <h3>System Overview</h3>
-          <p>Full analytics & statistics</p>
+      {/* Quick Actions */}
+      <section className="ad-section">
+        <h3 className="ad-section-title">
+          Quick Actions
+        </h3>
+
+        <div className="ad-actions-grid">
+
+          <div
+            className="ad-action-card"
+            onClick={() => navigate("/admin/users")}
+          >
+            <Users size={20} />
+            <h4>Manage Users</h4>
+            <p>Students, supervisors & roles</p>
+          </div>
+
+          <div
+            className="ad-action-card"
+            onClick={() => navigate("/admin/overview")}
+          >
+            <BarChart3 size={20} />
+            <h4>System Overview</h4>
+            <p>Analytics & statistics</p>
+          </div>
+
+          <div
+            className="ad-action-card"
+            onClick={() => navigate("/admin/placements")}
+          >
+            <FileText size={20} />
+            <h4>Internships</h4>
+            <p>Manage placements</p>
+          </div>
+
         </div>
+      </section>
+ 
+      <section className="ad-section">
+        <h3 className="ad-section-title">
+          Analytics
+        </h3>
 
-        <div className="action-card" onClick={() => navigate("/admin/placements")}>
-          <h3>Internships</h3>
-          <p>Add Internships</p>
+        <div className="ad-chart-grid">
+
+          <div className="ad-card">
+            <h4>Log Status Overview</h4>
+
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={logStatusData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="ad-card">
+            <h4>Placement Status</h4>
+
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie
+                  data={placementStatusData}
+                  dataKey="value"
+                  innerRadius={70}
+                  outerRadius={110}
+                >
+                  {placementStatusData.map((entry, index) => (
+                    <Cell
+                      key={index}
+                      fill={entry.fill}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
         </div>
+      </section>
+ 
+      <section className="ad-section">
+        <h3 className="ad-section-title">
+          Recent Updates
+        </h3>
 
-      </div>
+        <div className="ad-recent-grid">
 
-    {/* ================= CHARTS SIDE BY SIDE ================= */}
-      <div className="charts-grid">
+          <div className="ad-card">
+            <h4>Recent Users</h4>
 
-        <div className="chart-box">
-          <h3>Log Status Overview</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={logStatusData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+            {data.recent_users?.length ? (
+              data.recent_users.map(user => (
+                <div
+                  key={user.id}
+                  className="ad-activity-item"
+                >
+                  <span className="ad-activity-dot" />
 
-        <div className="chart-box">
-          <h3>Placement Status</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={placementStatusData}
-                cx="50%"
-                cy="50%"
-                innerRadius={70}
-                outerRadius={110}
-                dataKey="value"
-              >
-                {placementStatusData.map((entry, index) => (
-                  <Cell key={index} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-      </div>
-
-    {/* ================= RECENT SECTION SIDE BY SIDE ================= */}
-      <div className="recent-grid">
-
-        {/* RECENT USERS */}
-        <div className="section">
-          <h3>Recent Users</h3>
-
-          {data.recent_users?.length ? (
-            data.recent_users.map((user) => (
-              <div key={user.id} className="recent-item">
-                <div>
-                  <strong>{user.name}</strong>
-                  <span>{user.role}</span>
+                  <div className="ad-activity-body">
+                    <p>{user.name}</p>
+                    <small>{user.role}</small>
+                    <time>{user.joined}</time>
+                  </div>
                 </div>
-                <small>{user.joined}</small>
+              ))
+            ) : (
+              <div className="ad-empty-state">
+                <p>No recent users</p>
               </div>
-            ))
-          ) : (
-            <p>No recent users</p>
-          )}
-        </div>
+            )}
+          </div>
 
-      {/* RECENT ACTIVITIES */}
-        <div className="section">
-          <h3>Recent Activities</h3>
+          <div className="ad-card">
+            <h4>Recent Activities</h4>
 
-          {data.recent_activities?.length ? (
-            data.recent_activities.map((act, index) => (
-              <div key={index} className="activity-item">
-                <div>
-                  <strong>{act.title}</strong>
+            {data.recent_activities?.length ? (
+              data.recent_activities.map((activity, idx) => (
+                <div
+                  key={idx}
+                  className="ad-activity-item"
+                >
+                  <span className="ad-activity-dot" />
+
+                  <div className="ad-activity-body">
+                    <p>{activity.title}</p>
+                    <time>{activity.time}</time>
+                  </div>
                 </div>
-                <small>{act.time}</small>
+              ))
+            ) : (
+              <div className="ad-empty-state">
+                <p>No recent activity</p>
               </div>
-            ))
-          ) : (
-            <p>No recent activity</p>
-          )}
+            )}
+          </div>
+
         </div>
+      </section>
 
-      </div>
-
-    </div>
-  );
+    </main>
+  </div>
+);
+    
 }
