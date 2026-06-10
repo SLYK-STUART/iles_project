@@ -11,5 +11,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path("academic-dashboard/", AcademicDashboardView.as_view(), name='academic-dashboard'),
     path("admin-dashboard/", AdminDashboardView.as_view(), name='admin-dashboard'),
-    path("wp-dashboard/", WorkplaceDashboardView.as_view())
+    path("wp-dashboard/", WorkplaceDashboardView.as_view(), name='workplace-dashboard')
 ]
