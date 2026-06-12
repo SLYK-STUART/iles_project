@@ -1,264 +1,209 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  background: #0f172a;
-  overflow-x: hidden;
-}
-
-.evaluation-container {
-  min-height: 100vh;
-  background: #0f172a;
-  color: #e2e8f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 2rem 2.5rem;
-  width: 100%;
-}
- 
-.evaluation-header {
+.section-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.2rem;
-  border-bottom: 1px solid #334155;
-}
-
-.evaluation-header button {
-  background: #334155;
-  color: #e2e8f0;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.evaluation-header button:hover {
-  background: #475569;
-}
-
-.evaluation-header h1 {
-  color: white;
-  font-size: 2rem;
-  font-weight: 600;
-}
- 
-.student-info-card {
-  background: #1e293b;
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid #334155;
-  margin-bottom: 2rem;
-}
-
-.student-info-card h2 {
-  margin-bottom: 1.4rem;
-  color: #60a5fa;
-  font-size: 1.6rem;
-}
-
-.student-info-card p {
-  margin: 0.75rem 0;
-  color: #cbd5e1;
-  line-height: 1.7;
-}
- 
-.eval-status {
-  background: #1e293b;
-  padding: 1rem 1.8rem;
-  border-radius: 12px;
-  border: 1px solid #334155;
-  margin-bottom: 2rem;
-  display: inline-block;
-  font-size: 1.05rem;
-}
- 
-.logs-section {
-  background: #1e293b;
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid #334155;
-  margin-bottom: 2.5rem;
-}
-
-.logs-section h2 {
-  margin-bottom: 1.6rem;
-  color: white;
-  font-size: 1.55rem;
-}
-
-.log-card {
-  background: #0f172a;
-  border-radius: 14px;
-  padding: 1.6rem;
-  margin-bottom: 1.3rem;
-  border-left: 5px solid #3b82f6;
-}
-
-.log-header {
-  display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.3rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #334155;
-}
-
-.log-header h4 {
-  color: #e2e8f0;
-  font-size: 1.15rem;
-}
-
-.log-status {
-  padding: 5px 14px;
-  border-radius: 9999px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.log-status.approved { background: #22c55e; color: #111827; }
-.log-status.submitted { background: #eab308; color: #111827; }
-.log-status.draft { background: #64748b; color: white; }
-.log-status.rejected { background: #ef4444; color: white; }
-
-.log-field {
-  margin-bottom: 1.2rem;
-}
-
-.log-field strong {
-  display: block;
-  color: #94a3b8;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.log-field p {
-  color: #e2e8f0;
-  line-height: 1.65;
-}
-
-.no-logs {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #94a3b8;
-  font-style: italic;
-}
- 
-.evaluation-form {
-  background: #1e293b;
-  padding: 2.2rem;
-  border-radius: 16px;
-  border: 1px solid #334155;
-}
-
-.evaluation-form h2 {
-  margin-bottom: 1.8rem;
-  color: white;
-  font-size: 1.55rem;
-}
-
-.criterion-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #0f172a;
-  padding: 1.2rem 1.6rem;
-  border-radius: 12px;
   margin-bottom: 1rem;
-  border-left: 5px solid #60a5fa;
 }
 
-.criterion-row label {
-  font-weight: 500;
-  color: #e2e8f0;
-  font-size: 1.05rem;
-}
-
-.criterion-row input {
-  width: 130px;
-  padding: 12px;
-  background: #1e293b;
-  border: 1px solid #475569;
-  border-radius: 8px;
-  color: white;
-  text-align: center;
-  font-size: 1.15rem;
-}
-
-.criterion-row input:focus {
-  outline: none;
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-}
-
-textarea {
-  width: 100%;
-  min-height: 160px;
-  background: #0f172a;
-  border: 1px solid #475569;
-  border-radius: 12px;
-  color: #e2e8f0;
-  padding: 1.2rem;
-  margin: 1.8rem 0;
-  font-family: inherit;
-  font-size: 1.05rem;
-  resize: vertical;
-}
-
-.actions {
+.log-card-header {
   display: flex;
-  gap: 1.2rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.actions button {
-  padding: 13px 32px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.05rem;
+.log-section {
+  margin-bottom: 1rem;
+}
+
+.log-section:last-child {
+  margin-bottom: 0;
+}
+
+.log-section strong {
+  display: block;
+  font-size: 12px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sd-text-faint);
+  margin-bottom: 6px;
 }
 
-.actions button:first-child {
-  background: #475569;
-  color: white;
+.log-section p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--sd-text);
+  white-space: pre-wrap;
 }
 
-.actions button:last-child {
-  background: #22c55e;
-  color: black;
+.score-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--sd-green-bg);
+  border: 1px solid rgba(29, 158, 117, 0.15);
+  border-radius: var(--sd-radius-md);
 }
 
-.actions button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+.score-summary svg {
+  color: var(--sd-green);
+  flex-shrink: 0;
 }
- 
+
+.score-summary div {
+  display: flex;
+  flex-direction: column;
+}
+
+.score-summary span {
+  font-size: 12px;
+  color: var(--sd-green-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.score-summary strong {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sd-text);
+  letter-spacing: -0.03em;
+}
+
+.criterion-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.criterion-info {
+  flex: 1;
+}
+
+.criterion-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sd-text);
+  margin-bottom: 4px;
+}
+
+.criterion-info span {
+  font-size: 12px;
+  color: var(--sd-text-muted);
+}
+
+.criterion-input {
+  width: 110px;
+  height: 42px;
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-sm);
+  padding: 0 12px;
+  background: var(--sd-surface);
+  color: var(--sd-text);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.criterion-input:focus {
+  outline: none;
+  border-color: var(--sd-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.criterion-input:disabled {
+  background: var(--sd-surface-2);
+  color: var(--sd-text-muted);
+  cursor: not-allowed;
+}
+
+.comments-section {
+  margin-top: 1.5rem;
+}
+
+.comments-section label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sd-text);
+  margin-bottom: 10px;
+}
+
+.comments-section textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-md);
+  background: var(--sd-surface);
+  padding: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--sd-text);
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.comments-section textarea:focus {
+  outline: none;
+  border-color: var(--sd-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.comments-section textarea:disabled {
+  background: var(--sd-surface-2);
+  color: var(--sd-text-muted);
+}
+
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--sd-border);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  font-size: 14px;
+  color: var(--sd-text-muted);
+}
+
 @media (max-width: 768px) {
-  .evaluation-container {
-    padding: 1.2rem 1rem;
+  .criterion-card {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .criterion-row {
+  .criterion-input {
+    width: 100%;
+  }
+
+  .action-bar {
+    flex-direction: column;
+  }
+
+  .action-bar .sd-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .log-card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
   }
 
-  .actions {
+  .score-summary {
     flex-direction: column;
-  }
-
-  .actions button {
-    width: 100%;
+    text-align: center;
   }
 }
