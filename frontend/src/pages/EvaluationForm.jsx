@@ -1,9 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import {
+  ArrowLeft,
+  User,
+  Building2,
+  Calendar,
+  ClipboardCheck,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
 import "./EvaluationPage.css";
 
-export default function EvaluationPage({ title = "Academic Evaluation" }) {
+export default function EvaluationPage({
+  title = "Academic Evaluation",
+}) {
   const { placementId } = useParams();
   const navigate = useNavigate();
 
@@ -16,7 +28,7 @@ export default function EvaluationPage({ title = "Academic Evaluation" }) {
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
- 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,9 +42,11 @@ export default function EvaluationPage({ title = "Academic Evaluation" }) {
 
         if (d.existing_evaluation?.exists) {
           const scoreMap = {};
-          d.existing_evaluation.items.forEach(item => {
+
+          d.existing_evaluation.items.forEach((item) => {
             scoreMap[item.criteria] = item.score;
           });
+
           setScores(scoreMap);
           setComments(d.existing_evaluation.comments || "");
         }
@@ -46,14 +60,14 @@ export default function EvaluationPage({ title = "Academic Evaluation" }) {
 
     fetchData();
   }, [placementId]);
- 
+
   const calculateStats = () => {
     if (!data?.start_date) {
       return {
         totalWeeks: 0,
         currentWeek: 0,
         missingWeeks: 0,
-        today: new Date()
+        today: new Date(),
       };
     }
 
@@ -73,36 +87,61 @@ export default function EvaluationPage({ title = "Academic Evaluation" }) {
       totalWeeks,
       currentWeek,
       missingWeeks: missingWeeks > 0 ? missingWeeks : 0,
-      today
+      today,
     };
   };
 
-  const { totalWeeks, currentWeek, missingWeeks, today } = calculateStats();
- 
+  const {
+    totalWeeks,
+    currentWeek,
+    missingWeeks,
+  } = calculateStats();
+
   const handleScoreChange = (criteriaId, value) => {
-    setScores(prev => ({ ...prev, [criteriaId]: parseFloat(value) || 0 }));
+    setScores((prev) => ({
+      ...prev,
+      [criteriaId]: parseFloat(value) || 0,
+    }));
   };
- 
+
+  const totalScore = useMemo(() => {
+    return criteria.reduce((sum, c) => {
+      return sum + (Number(scores[c.id]) || 0);
+    }, 0);
+  }, [scores, criteria]);
+
   const saveDraft = async () => {
     setSubmitting(true);
+
     try {
       const payload = {
         placement: placementId,
         comments: comments.trim(),
-        items: criteria.map(c => ({
+        items: criteria.map((c) => ({
           criteria: c.id,
-          score: scores[c.id] || 0
-        }))
+          score: scores[c.id] || 0,
+        })),
       };
 
       if (existingEval?.exists) {
-        await API.put(`evaluations/evaluations/${existingEval.id}/`, payload);
+        await API.put(
+          `evaluations/evaluations/${existingEval.id}/`,
+          payload
+        );
       } else {
-        const res = await API.post("evaluations/evaluations/", payload);
-        setExistingEval({ exists: true, id: res.data.id, status: "DRAFT" });
+        const res = await API.post(
+          "evaluations/evaluations/",
+          payload
+        );
+
+        setExistingEval({
+          exists: true,
+          id: res.data.id,
+          status: "DRAFT",
+        });
       }
 
-      alert("Draft saved successfully!");
+      alert("Draft saved successfully");
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.detail || "Failed to save");
@@ -110,14 +149,18 @@ export default function EvaluationPage({ title = "Academic Evaluation" }) {
       setSubmitting(false);
     }
   };
- 
+
   const submitEvaluation = async () => {
     if (!existingEval?.id) return;
 
     setSubmitting(true);
+
     try {
-      await API.post(`evaluations/evaluations/${existingEval.id}/submit/`);
-      alert("Evaluation submitted successfully!");
+      await API.post(
+        `evaluations/evaluations/${existingEval.id}/submit/`
+      );
+
+      alert("Evaluation submitted successfully");
       navigate(-1);
     } catch (err) {
       console.error(err);
@@ -127,125 +170,330 @@ export default function EvaluationPage({ title = "Academic Evaluation" }) {
     }
   };
 
-  const isSubmitted = existingEval?.status === "SUBMITTED";
+  const isSubmitted =
+    existingEval?.status === "SUBMITTED";
 
-  if (loading) return <p className="loading">Loading...</p>;
+  if (loading)
+    return <p className="loading">Loading evaluation...</p>;
 
-  return (
-    <div className="evaluation-container">
-      <div className="evaluation-header">
-        <button onClick={() => navigate(-1)}>← Back</button>
+   return (
+  <div className="student-dashboard">
+ 
+    <header className="sd-topbar">
+      <div className="sd-topbar-left">
+        <span className="sd-logo-mark">EV</span>
         <h1>{title}</h1>
       </div>
+
+      <div className="sd-topbar-right">
+        <button
+          className="sd-btn sd-btn-ghost"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft size={16} />
+          Back
+        </button>
+
+        {existingEval?.exists && (
+          <span className={`eval-status ${existingEval.status.toLowerCase()}`}>
+            {existingEval.status}
+          </span>
+        )}
+      </div>
+    </header>
+
+    <main className="sd-main">
  
-      <div className="student-info-card">
-        <h2>Student Info</h2>
-        <p><strong>Name:</strong> {data?.student?.name}</p>
-        <p><strong>Company:</strong> {data?.company}</p>
-        <p><strong>Start date:</strong> {data?.start_date}</p>
-        <p><strong>End date:</strong> {data?.end_date}</p>
- 
-        <div style={{ marginTop: "15px", lineHeight: "1.6" }}>
-          <p><strong>Current Date:</strong> {today.toDateString()}</p>
-          <p><strong>Total Weeks (so far):</strong> {totalWeeks}</p>
-          <p><strong>Current Week:</strong> Week {currentWeek}</p>
-          <p style={{ color: "#ef4444" }}>
-            <strong>Weeks without logs:</strong> {missingWeeks}
-          </p>
-        </div>
+      <div className="sd-welcome">
+        <h2>
+          Evaluate <span className="sd-name">{data?.student?.name}</span>
+        </h2>
+
+        <p className="sd-subtitle">
+          Internship Performance Assessment
+        </p>
       </div>
  
-      {existingEval?.exists && (
-        <div className="eval-status">
-          <strong>Status:</strong> {existingEval.status}
-        </div>
-      )}
- 
-      <div className="logs-section">
-        <h2>Student Weekly Logs</h2>
-        {logs.length > 0 ? (
-          logs.map((log, index) => (
-            <div key={index} className="log-card">
-              <div className="log-header">
-                <h4>
-                  Week of{" "}
-                  {new Date(log.week).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                  })}
-                </h4>
-                <span className={`log-status ${log.status.toLowerCase()}`}>
-                  {log.status}
-                </span>
-              </div>
+      <section className="sd-section">
 
-              <div className="log-content">
-                <div className="log-field">
-                  <strong>Activities:</strong>
-                  <p>{log.activities || "No activities recorded"}</p>
+        <div className="sd-stats-grid">
+
+          <div className="sd-stat-card">
+            <span className="sd-stat-label">
+              Student
+            </span>
+
+            <span className="sd-stat-num">
+              {data?.student?.name}
+            </span>
+          </div>
+
+          <div className="sd-stat-card">
+            <span className="sd-stat-label">
+              Company
+            </span>
+
+            <span className="sd-stat-num">
+              {data?.company}
+            </span>
+          </div>
+
+          <div className="sd-stat-card submitted">
+            <span className="sd-stat-label">
+              Current Week
+            </span>
+
+            <span className="sd-stat-num">
+              {currentWeek}
+            </span>
+          </div>
+
+          <div className="sd-stat-card approved">
+            <span className="sd-stat-label">
+              Total Weeks
+            </span>
+
+            <span className="sd-stat-num">
+              {totalWeeks}
+            </span>
+          </div>
+
+          <div className="sd-stat-card rejected">
+            <span className="sd-stat-label">
+              Missing Logs
+            </span>
+
+            <span className="sd-stat-num">
+              {missingWeeks}
+            </span>
+          </div>
+
+        </div>
+
+      </section>
+ 
+      <section className="sd-info-grid">
+
+        <div className="sd-card">
+          <h3 className="sd-card-title">
+            Student Information
+          </h3>
+
+          <dl className="sd-dl">
+
+            <div className="sd-dl-row">
+              <dt>Name</dt>
+              <dd>{data?.student?.name}</dd>
+            </div>
+
+            <div className="sd-dl-row">
+              <dt>Company</dt>
+              <dd>{data?.company}</dd>
+            </div>
+
+            <div className="sd-dl-row">
+              <dt>Start Date</dt>
+              <dd>{data?.start_date}</dd>
+            </div>
+
+            <div className="sd-dl-row">
+              <dt>End Date</dt>
+              <dd>{data?.end_date}</dd>
+            </div>
+
+          </dl>
+        </div>
+
+        <div className="sd-card">
+          <h3 className="sd-card-title">
+            Evaluation Summary
+          </h3>
+
+          <dl className="sd-dl">
+
+            <div className="sd-dl-row">
+              <dt>Total Logs</dt>
+              <dd>{logs.length}</dd>
+            </div>
+
+            <div className="sd-dl-row">
+              <dt>Missing Weeks</dt>
+              <dd>{missingWeeks}</dd>
+            </div>
+
+            <div className="sd-dl-row">
+              <dt>Total Score</dt>
+              <dd>{totalScore.toFixed(2)}</dd>
+            </div>
+
+            <div className="sd-dl-row">
+              <dt>Status</dt>
+              <dd>
+                {existingEval?.status || "Not Started"}
+              </dd>
+            </div>
+
+          </dl>
+        </div>
+
+      </section>
+ 
+      <section className="sd-section">
+
+        <h3 className="sd-section-title">
+          Weekly Logbook Entries
+        </h3>
+
+        {logs.length > 0 ? (
+          <div className="sd-eval-details">
+
+            {logs.map((log, index) => (
+              <div
+                key={index}
+                className="sd-eval-card"
+              >
+                <div className="log-card-header">
+
+                  <h4>
+                    Week of{" "}
+                    {new Date(log.week).toLocaleDateString()}
+                  </h4>
+
+                  <span
+                    className={`log-status ${log.status.toLowerCase()}`}
+                  >
+                    {log.status}
+                  </span>
+
+                </div>
+
+                <div className="log-section">
+                  <strong>Activities</strong>
+                  <p>{log.activities}</p>
                 </div>
 
                 {log.challenges && (
-                  <div className="log-field">
-                    <strong>Challenges:</strong>
+                  <div className="log-section">
+                    <strong>Challenges</strong>
                     <p>{log.challenges}</p>
                   </div>
                 )}
 
                 {log.learning_outcomes && (
-                  <div className="log-field">
-                    <strong>Learning Outcomes:</strong>
+                  <div className="log-section">
+                    <strong>Learning Outcomes</strong>
                     <p>{log.learning_outcomes}</p>
                   </div>
                 )}
               </div>
-            </div>
-          ))
-        ) : (
-          <p className="no-logs">No weekly logs submitted yet.</p>
-        )}
-      </div>
- 
-      <div className="evaluation-form">
-        <h2>Evaluation Criteria</h2>
+            ))}
 
-        {criteria.map(c => (
-          <div key={c.id} className="criterion-row">
-            <label>{c.name} <small>({c.weight}%)</small></label>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.01"
-              value={scores[c.id] || ""}
-              disabled={isSubmitted}
-              onChange={(e) => handleScoreChange(c.id, e.target.value)}
-            />
           </div>
-        ))}
+        ) : (
+          <div className="sd-empty-state">
+            <FileText size={40} />
+            <p className="sd-empty-title">
+              No weekly logs submitted yet
+            </p>
+          </div>
+        )}
 
-        <textarea
-          placeholder="Additional comments..."
-          value={comments}
-          disabled={isSubmitted}
-          onChange={(e) => setComments(e.target.value)}
-        />
+      </section>
+ 
+      <section className="sd-section">
 
-        {!isSubmitted && (
-          <div className="actions">
-            <button onClick={saveDraft} disabled={submitting}>
-              {existingEval?.exists ? "Update Draft" : "Save Draft"}
+        <h3 className="sd-section-title">
+          Evaluation Criteria
+        </h3>
+
+        <div className="sd-card">
+
+          <div className="criteria-list">
+
+            {criteria.map((c) => (
+              <div
+                key={c.id}
+                className="criterion-card"
+              >
+                <div className="criterion-info">
+                  <h4>{c.name}</h4>
+                  <span>
+                    Weight: {c.weight}%
+                  </span>
+                </div>
+
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  value={scores[c.id] || ""}
+                  disabled={isSubmitted}
+                  onChange={(e) =>
+                    handleScoreChange(
+                      c.id,
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+            ))}
+
+          </div>
+
+          <div className="comments-section">
+
+            <label>
+              Supervisor Comments
+            </label>
+
+            <textarea
+              value={comments}
+              disabled={isSubmitted}
+              placeholder="Provide overall evaluation comments..."
+              onChange={(e) =>
+                setComments(e.target.value)
+              }
+            />
+
+          </div>
+
+        </div>
+
+      </section>
+ 
+      {!isSubmitted && (
+        <section className="sd-section">
+
+          <div className="eval-actions">
+
+            <button
+              className="sd-btn sd-btn-ghost"
+              onClick={saveDraft}
+              disabled={submitting}
+            >
+              {existingEval?.exists
+                ? "Update Draft"
+                : "Save Draft"}
             </button>
 
             {existingEval?.exists && (
-              <button onClick={submitEvaluation} disabled={submitting}>
-                Submit Final Evaluation
+              <button
+                className="sd-btn"
+                onClick={submitEvaluation}
+                disabled={submitting}
+              >
+                Submit Evaluation
               </button>
             )}
+
           </div>
-        )}
-      </div>
-    </div>
-  );
+
+        </section>
+      )}
+
+    </main>
+
+  </div>
+);
 }
