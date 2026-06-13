@@ -1,13 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import "./AdminCreateSupervisor.css";
 
 export default function AdminCreateSupervisor() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
     email: "",
-    role: "WP_SUP"
+    role: "WP_SUP",
   });
 
   const [loading, setLoading] = useState(false);
@@ -31,16 +35,14 @@ export default function AdminCreateSupervisor() {
 
     try {
       const res = await API.post("admin/create-supervisor/", form);
-
       setResult(res.data.user);
 
       setForm({
         first_name: "",
         last_name: "",
         email: "",
-        role: "WP_SUP"
+        role: "WP_SUP",
       });
-
     } catch (err) {
       console.error(err.response?.data);
       setError(JSON.stringify(err.response?.data));
@@ -51,6 +53,21 @@ export default function AdminCreateSupervisor() {
 
   return (
     <div className="admin-form">
+ 
+      <header className="admin-topbar">
+        <div className="admin-topbar-left">
+          <div className="admin-topbar-badge">AS</div>
+          <div className="admin-topbar-title">Create Supervisor</div>
+        </div>
+
+        <div className="admin-topbar-right">
+          <button className="admin-back-btn" onClick={() => navigate(-1)}>
+            <ArrowLeft size={16} />
+            Back
+          </button>
+        </div>
+      </header>
+ 
       <h2>Create Supervisor</h2>
 
       {error && <div className="error-box">{error}</div>}
@@ -82,6 +99,7 @@ export default function AdminCreateSupervisor() {
       </select>
 
       <button onClick={handleSubmit} disabled={loading}>
+        <UserPlus size={16} />
         {loading ? "Creating..." : "Create Supervisor"}
       </button>
 
